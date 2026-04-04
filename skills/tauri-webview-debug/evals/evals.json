@@ -1,0 +1,46 @@
+{
+  "skill_name": "tauri-webview-debug",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to debug this Tauri app's WebView. How do I inspect the DOM and check console logs with Chrome DevTools MCP?",
+      "expected_output": "Step-by-step guide covering CDP port activation (env var), Chrome DevTools MCP connection (--browserUrl), list of available capabilities, and production security warnings",
+      "files": [],
+      "assertions": [
+        "Includes CDP port activation method (WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS env var or additionalBrowserArgs config)",
+        "States that the env var is process-level or shows it inline in the launch command",
+        "Includes Chrome DevTools MCP connection method (--browserUrl http://127.0.0.1:9222 or similar)",
+        "Lists available capabilities concretely (at least 3)",
+        "Mentions production security warnings",
+        "Mentions Windows-only (WebView2) limitation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I want to run a Lighthouse accessibility audit on a Tauri app. Can I do it directly on WebView2? If not, what's the alternative?",
+      "expected_output": "Explanation of Lighthouse limitations on WebView2 CDP (per category), note that accessibility is DOM-based so it works on direct connection, and alternative of opening localhost:1420 in Chrome with mock injection for full Lighthouse",
+      "files": [],
+      "assertions": [
+        "States that full Lighthouse audit is limited on WebView2 CDP",
+        "Distinguishes that Accessibility is DOM-based and works on WebView2",
+        "Explains why the Performance category is limited",
+        "Suggests the browser-direct alternative (localhost dev server)",
+        "Mentions that invoke() mocks are needed",
+        "Provides concrete mock injection instructions"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I want to do UI automation testing on this Tauri app with Playwright MCP. How do I set it up and what should I watch out for?",
+      "expected_output": "CDP port activation -> Playwright MCP cdp://localhost:9222 connection method, target page selection in multi-window (main + overlay) environments, and limitations note that native APIs like invoke() cannot be tested",
+      "files": [],
+      "assertions": [
+        "Includes CDP port activation method",
+        "Includes Playwright MCP CDP connection method (cdp://localhost:9222 or similar)",
+        "Lists available Playwright MCP capabilities (at least 3)",
+        "Mentions target selection caveats in multi-window environments",
+        "Mentions that Tauri native APIs like invoke() cannot be tested"
+      ]
+    }
+  ]
+}

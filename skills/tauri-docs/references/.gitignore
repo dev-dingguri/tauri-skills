@@ -1,0 +1,7 @@
+# Cloned repos (update.sh handles these)
+tauri-docs/
+plugins-workspace/
+
+# Auto-generated files
+auto-index.md
+.last_updated
