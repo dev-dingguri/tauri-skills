@@ -89,8 +89,27 @@ fn get_stats(app: AppHandle) -> Stats { ... }
 
 ## Step 3: L2 — Vitest + RTL + Tauri Mock
 
-L2 is the largest layer by test count for most Tauri apps. The
-building blocks are three recipes under `references/recipes/`:
+L2 is the largest layer by test count for most Tauri apps.
+
+### Bootstrap
+
+Three things must be in place before any L2 test runs:
+
+- **`vitest.config.ts`**: `environment: "jsdom"` (RTL needs a DOM) and
+  the `@/` path alias matching `tsconfig.json` so imports resolve the
+  same in tests as in source.
+- **`tsconfig.json`**: exclude test files — `"exclude": ["src/test",
+  "**/*.test.ts", "**/*.test.tsx"]`. Vitest's globals (`vi`, `expect`)
+  aren't declared during `tsc` builds, so type-checking test files in
+  `tsc` fails. Excluding them keeps `tsc` green while Vitest still
+  runs them at test time.
+- **`src/test/setup.ts`**: `import "@testing-library/jest-dom/vitest";`
+  — registers matchers like `toBeInTheDocument()` so assertions read
+  naturally.
+
+### Mock Recipes
+
+The mock building blocks live in `references/recipes/`:
 
 1. **`l2-vitest-mock.md`** — the Tauri API mock triple (`core`,
    `event`, `window`) plus per-command invoke mock data. Every test
@@ -224,25 +243,3 @@ permanently manual:
 | Physical device detection | Requires plug/unplug events |
 | Reboot-triggered autostart | Requires OS reboot |
 | Long-running stability (CPU, memory leak) | Requires long observation |
-
----
-
-## Setup Checklist
-
-When building tests for a new Tauri v2 project:
-
-1. [ ] Classify features into L1–L4 (Step 1)
-2. [ ] Configure `vitest.config.ts` with `environment: "jsdom"` and `@/` alias
-3. [ ] Exclude test files in `tsconfig.json` — `"exclude": ["src/test", "**/*.test.ts", "**/*.test.tsx"]` prevents Vitest global type errors in `tsc` builds
-4. [ ] Import `@testing-library/jest-dom/vitest` in `src/test/setup.ts`
-5. [ ] Apply the Tauri API mock triple from `references/recipes/l2-vitest-mock.md`
-6. [ ] `afterEach`: `vi.clearAllMocks()` + `vi.useRealTimers()` — **never** `restoreAllMocks`
-7. [ ] Define per-command invoke mock data for every Tauri command used by components
-8. [ ] (If using Zustand) Add store reset in `beforeEach` per `l2-zustand-testing.md`
-9. [ ] (If CDP debugging or L3 tests) Run `/tauri-webview-debug` Step 0 to get `.mcp.json` in place
-10. [ ] (If L3 tests) Copy the fixture from `l3-playwright-fixture.md`; read `TAURI_CDP_PORT` from env
-11. [ ] (If L4 or hybrid) Invoke `/tauri-os-automation` and set up `tests-native/` per its guidance; `TrayIconBuilder` needs `.tooltip()`
-12. [ ] (If hybrid) Add `playwright` to `tests-native/pyproject.toml` and copy `helpers/cdp.py` from `l4-hybrid-cdp-python.md`
-13. [ ] (If hybrid) Extend the app fixture to pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS` with `TAURI_CDP_PORT`
-14. [ ] Add `data-testid` to every WebView element used in L3 / hybrid tests — available after next frontend rebuild
-15. [ ] Document remaining L4 manual items with the rationale from `/tauri-os-automation`

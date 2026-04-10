@@ -191,12 +191,12 @@ windows to `visible: false` (show-gate requires JS-side `show()`).
 
 ## Step 6: Invoke Existing Skills
 
-**6a. /tauri-test-setup — Setup Checklist only.** Invoke and follow only
-that section: verify `vitest.config.ts` (from Step 3), add
-`@testing-library/jest-dom/vitest` to `src/test/setup.ts`, write the
-Tauri API mock triple (core, event, window), and note L4 manual items
-as a CLAUDE.md placeholder. Do NOT run Step 1 "Classify features into
-L1–L4" — no features exist at init time.
+**6a. /tauri-test-setup — Step 3 Bootstrap only.** Invoke the skill and
+apply Step 3's "Bootstrap" subsection (`vitest.config.ts` jsdom + `@/`
+alias, `tsconfig.json` test exclude, `jest-dom/vitest` import) plus
+the Tauri API mock triple from `l2-vitest-mock.md` (core, event,
+window). Note L4 manual items as a CLAUDE.md placeholder. Do NOT run
+Step 1 "Classify features into L1–L4" — no features exist at init time.
 
 **6b. /tauri-webview-debug — Step 0 only.** Invoke and follow only
 "Ensure .mcp.json": create `.mcp.json` with `chrome-devtools-cdp` and
