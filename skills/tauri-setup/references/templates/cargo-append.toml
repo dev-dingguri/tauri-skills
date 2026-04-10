@@ -1,0 +1,26 @@
+# Append to src-tauri/Cargo.toml.
+#
+# Also update [lib] crate-type: remove "staticlib" (iOS/mobile-only).
+# Desktop-only apps should have: crate-type = ["cdylib", "rlib"]
+# Keeping "staticlib" forces an extra full compilation pass — noticeable cost.
+
+[lints.clippy]
+# -- Safety --
+unwrap_used = "warn"
+cast_possible_truncation = "warn"
+cast_sign_loss = "warn"
+# -- Readability --
+# Why not needless_pass_by_value: Tauri #[command] macro requires owned AppHandle/State
+redundant_closure_for_method_calls = "warn"
+manual_string_new = "warn"
+implicit_clone = "warn"
+# -- Maintenance --
+cloned_instead_of_copied = "warn"
+inefficient_to_string = "warn"
+unused_self = "warn"
+
+[profile.release]
+# Why: PDB symbols for crash dump analysis. Stored in a separate .pdb file,
+# so the .exe size is unaffected.
+debug = true
+strip = false

@@ -1,0 +1,14 @@
+// Merge into the existing tsconfig.json compilerOptions.
+// The @/ alias must be synchronized with vite.config.ts, vitest.config.ts,
+// and components.json (if shadcn/ui is used).
+{
+  "compilerOptions": {
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

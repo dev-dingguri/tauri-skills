@@ -1,0 +1,14 @@
+# Create both /.cargo/config.toml and /src-tauri/.cargo/config.toml with this content (Windows).
+
+[build]
+target = "x86_64-pc-windows-msvc"
+# Why jobs=2: Tauri's first build compiles hundreds of crates in parallel.
+# Full parallelism can cause OOM on machines with limited RAM, corrupting
+# the build cache (requires `cargo clean` to recover). 2 jobs is safe.
+jobs = 2
+
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "link-arg=/PDBALTPATH:%_PDB%"]
+
+[env]
+RUST_BACKTRACE = "1"

@@ -1,0 +1,20 @@
+# CLAUDE.md
+
+## Overview
+
+<Project name> — <one-line description>.
+
+## Architecture
+
+- <Single-window | Multi-window>: <list windows with labels and roles if multi>
+- <Vite multi-page build (`index.html`, `pages/<name>.html`) — only if multi-window>
+- Show-gate pattern: windows start `visible: false`, JS calls `show()` after init
+
+## Conventions
+
+- <shadcn/ui: <preset> style, `<asChild | render>` pattern — only if shadcn chosen>
+- <Tauri capabilities: per-window JSON files in `src-tauri/capabilities/` — only if multi-window>
+
+## Tauri
+
+- Always use /tauri-docs before modifying `src-tauri/` or frontend code that calls `@tauri-apps/api`

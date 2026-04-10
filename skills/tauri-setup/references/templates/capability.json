@@ -1,0 +1,8 @@
+{
+	"identifier": "<window-label>-capability",
+	"description": "<window> window permissions",
+	"windows": ["<window-label>"],
+	"permissions": [
+		"core:default"
+	]
+}
