@@ -9,6 +9,9 @@ description: >-
 
 # Tauri v2 Project Initial Setup
 
+> **Platform note:** This skill targets Windows (MSVC toolchain, WebView2).
+> macOS/Linux setup has not been tested.
+
 End-to-end setup for a new Tauri v2 desktop app project.
 Orchestrates scaffold, config, testing, and debugging setup in one flow.
 

@@ -9,6 +9,9 @@ description: >-
 
 # Tauri Test Generator
 
+> **Platform note:** L3 tests are cross-platform, but L4 patterns (CDP, pywinauto, UIA)
+> have only been tested on Windows. macOS/Linux equivalents are unverified.
+
 Generate the right tests at the right layer by first understanding user journeys.
 Write tests for **user outcomes**, not code coverage — then map each journey step
 to the cheapest test layer that verifies it.

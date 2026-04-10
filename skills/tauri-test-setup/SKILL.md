@@ -12,6 +12,9 @@ description: >-
 
 # Tauri v2 Testing — Layer-Based Test Strategy
 
+> **Platform note:** L3 (Vitest + RTL) is cross-platform, but L4 (CDP, pywinauto, UIA)
+> has only been tested on Windows. macOS/Linux equivalents are unverified.
+
 ## Core Principle
 
 A Tauri app is a **web frontend + native backend** dual architecture.

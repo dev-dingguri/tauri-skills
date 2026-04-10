@@ -13,15 +13,17 @@ Workflow for debugging Tauri v2 WebViews using Chrome DevTools MCP / Playwright 
 ## Platform Check
 
 Tauri v2 uses different webview engines per platform.
+This skill has only been tested on Windows. macOS/Linux debugging workflows are unverified.
 
-| Platform | WebView Engine | CDP Support |
-|----------|---------------|:-----------:|
-| **Windows** | WebView2 (Chromium) | **Yes** |
-| macOS | WKWebView (WebKit) | No |
-| Linux | WebKitGTK | No |
+| Platform | WebView Engine | CDP Support | Built-in Inspector | Status |
+|----------|---------------|:-----------:|:------------------:|--------|
+| **Windows** | WebView2 (Chromium) | **Yes** | Edge DevTools | **Tested** |
+| macOS | WKWebView (WebKit) | No | Safari Inspector | Unverified |
+| Linux | WebKitGTK | No | webkit2gtk WebInspector | Unverified |
 
 CDP-based tools (Chrome DevTools MCP, Playwright MCP) can **only connect directly on Windows** via WebView2.
-On macOS/Linux, only Step 4 (browser-direct approach) is available.
+On macOS/Linux, the built-in inspector (right-click → Inspect) works per Tauri docs,
+but external tool integration and this skill's workflow have not been tested.
 
 ---
 
