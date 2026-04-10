@@ -6,7 +6,7 @@ tool alone covers them:
 
 - **pywinauto** cannot click WebView2 internal elements (Radix Switch,
   Canvas controls, Shadow DOM) — WebView2 does not expose them on the
-  UIA accessibility tree.
+  UIA tree.
 - **Playwright CDP** cannot interact with OS-level UI (system tray,
   native context menus, Win32 popups).
 
@@ -85,7 +85,7 @@ def connect_cdp(timeout: float = 10):
 ## Infrastructure: App Fixture with CDP Env Var
 
 The pytest `app` fixture from `/tauri-os-automation`'s pywinauto
-patterns needs a small extension to pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`
+patterns needs an extension to pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`
 to the Tauri subprocess:
 
 ```python
@@ -124,9 +124,9 @@ fixture.
 
 ## Test Pattern: Tray → Switch → Registry
 
-The classic hybrid flow. Open the settings window via the tray menu
-(L4), toggle a Radix Switch inside it via CDP (L3), then verify the
-registry change (L4 again).
+Classic hybrid flow. Open the settings window via the tray menu (L4),
+toggle a Radix Switch inside it via CDP (L3), then verify the registry
+change (L4 again).
 
 ```python
 # tests-native/test_autostart.py

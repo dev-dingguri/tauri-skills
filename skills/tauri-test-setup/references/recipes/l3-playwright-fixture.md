@@ -146,10 +146,10 @@ Rules of thumb:
 
 ## Gotcha: Vitest/Playwright `test.describe` Collision
 
-Both Vitest and Playwright export `test` / `describe`. If E2E files are
-accidentally picked up by Vitest, the two testing harnesses collide and
-produce cryptic failures ("describe is not a function" or worse, both
-ran partially).
+Both Vitest and Playwright export `test` / `describe`. If Vitest
+accidentally picks up E2E files, the two harnesses collide and produce
+cryptic failures ("describe is not a function" or worse, both ran
+partially).
 
 ```typescript
 // vitest.config.ts

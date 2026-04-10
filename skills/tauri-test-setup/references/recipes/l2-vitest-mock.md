@@ -1,10 +1,9 @@
 # L2 Recipe — Tauri API Mock Triple (Vitest + RTL)
 
-Every Tauri v2 frontend test that touches `@tauri-apps/api/*` must mock
+Every Tauri v2 frontend test touching `@tauri-apps/api/*` must mock
 three modules: `core` (for `invoke`), `event` (for `emit` / `listen`),
-and `window` (for `getCurrentWindow`). Missing any one of them causes a
-hard crash inside component `useEffect` paths that rely on the missing
-module.
+and `window` (for `getCurrentWindow`). Missing any one causes a hard
+crash in `useEffect` paths that rely on it.
 
 ## The Mock Triple
 
@@ -52,7 +51,7 @@ export { mockInvoke };
 Define invoke responses in `beforeEach` so every test starts from a
 known baseline. Use a `switch` instead of `mockResolvedValueOnce` — the
 latter is order-dependent and brittle when components fire multiple
-`invoke` calls during mount.
+`invoke` calls on mount.
 
 ```typescript
 import { beforeEach } from "vitest";
@@ -77,7 +76,7 @@ beforeEach(() => {
 
 ## Per-Test Override
 
-Override a single command without rewriting the whole switch:
+Override one command without rewriting the switch:
 
 ```typescript
 it("shows error when get_settings fails", async () => {

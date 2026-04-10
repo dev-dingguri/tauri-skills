@@ -2,9 +2,9 @@
 
 Some features are only reachable via OS events (speaker detection,
 device hotplug, global hotkey) — the frontend has no direct way to
-trigger them. For E2E tests to cover these paths, expose **dev-only
-escape hatches** from the frontend and backend. Both forms are gated
-so they never ship in a release binary.
+trigger them. To cover these paths in E2E, expose **dev-only escape
+hatches** from frontend and backend. Both forms are gated so they
+never ship in a release binary.
 
 ## Option A: Debug Tauri Command — Rust Side
 
@@ -15,7 +15,7 @@ handler. Two non-obvious requirements:
    `generate_handler![]` cannot accept attribute-gated items, so the
    command must be unconditionally registered and self-gate at runtime.
 2. **`std::thread::spawn` when the command creates a WebView window.**
-   Without it, the command deadlocks — explained below.
+   Without it, the command deadlocks (see below).
 
 ```rust
 // src-tauri/src/debug.rs
@@ -116,8 +116,8 @@ await page.evaluate(() => {
 | Feature chains backend → frontend state | **A** — backend is authoritative |
 
 Prefer A when in doubt — it exercises more of the real code path. B is
-a shortcut for pure rendering tests where wiring up a backend command
-adds no coverage.
+a shortcut for pure rendering tests where a backend command adds no
+coverage.
 
 ## Related
 

@@ -1,14 +1,14 @@
 # L2 Recipe — Zustand Store Testing
 
 Zustand actions that internally call Tauri `invoke` can be tested by
-**directly setting store state** instead of re-running the actions.
-This bypasses the network of mocks and makes conditional-rendering
+**directly setting store state** instead of replaying actions. This
+bypasses the network of mocks and makes conditional-rendering
 assertions trivial.
 
 ## Why Direct `setState` Over Action Replay
 
-- Actions often chain `invoke` → `set` → `emit`, and replaying them in
-  a test requires mocking every intermediate step.
+- Actions often chain `invoke` → `set` → `emit`; replaying them
+  requires mocking every intermediate step.
 - Tests care about "what does the component render when the store is
   in state X", not "does the action reach state X correctly". The
   latter belongs to an action-level unit test.
@@ -17,8 +17,8 @@ assertions trivial.
 
 ## Baseline State in `beforeEach`
 
-Reset to a known baseline before every test. Tests that need a
-variation then call `setState` again with an override.
+Reset to a known baseline before every test. Tests needing a variation
+call `setState` again with an override.
 
 ```typescript
 import { beforeEach } from "vitest";
@@ -49,8 +49,8 @@ it("shows welcome toast on first run", () => {
 ## When to Replay the Action Instead
 
 Direct `setState` is the right default, but **replay the action** when
-the test is verifying the action itself — e.g., "saving the volume
-persists it via `invoke('set_volume', ...)`". In that case:
+verifying the action itself — e.g., "saving the volume persists it
+via `invoke('set_volume', ...)`". In that case:
 
 1. Spy on `mockInvoke` (from `l2-vitest-mock.md`).
 2. Call the action: `await useStore.getState().setVolume(0.3)`.

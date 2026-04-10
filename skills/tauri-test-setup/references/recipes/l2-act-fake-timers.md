@@ -82,9 +82,9 @@ timer. Always restore in `afterEach`.
 ## When You DON'T Need `act()`
 
 - Synchronous user events via `@testing-library/user-event` already
-  wrap their dispatches in `act()` internally.
-- `render()` itself wraps the initial mount.
-- `fireEvent` + synchronous handlers do not need an explicit wrapper.
+  wrap dispatches in `act()`.
+- `render()` wraps the initial mount.
+- `fireEvent` + synchronous handlers need no explicit wrapper.
 
 You need `act()` explicitly **only** when:
 1. You advance fake timers that trigger `setState`.
