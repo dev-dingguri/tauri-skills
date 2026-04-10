@@ -15,6 +15,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "bash .claude/hooks/enforce-english-content.sh"
+          },
+          {
+            "type": "command",
             "command": "bash .claude/hooks/check-proprietary-names.sh"
           },
           {
