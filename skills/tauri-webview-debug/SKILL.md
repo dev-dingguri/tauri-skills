@@ -254,17 +254,3 @@ command).
 | UI automation testing | Playwright MCP | No |
 | CLS, TBT performance trace | Chrome DevTools MCP | No |
 | Full Lighthouse audit | Chrome on localhost | **Yes** |
-
----
-
-## Checklist
-
-1. [ ] Verify platform (Windows?)
-2. [ ] Apply `references/mcp-json-template.json` if `.mcp.json` lacks `-cdp` entries (Step 0)
-3. [ ] Build Rust backend (`cargo build --manifest-path src-tauri/Cargo.toml`) — long timeout / background
-4. [ ] Launch with CDP port: invoke `/tauri-multi-instance` (`node scripts/tauri-dev.mjs`), or manually set `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222"` then `cargo tauri dev`
-5. [ ] Verify: Playwright `browser_tabs` / Chrome DevTools `list_pages` shows Tauri app pages, not `about:blank`
-6. [ ] Select target page if multi-window
-7. [ ] **NEVER** navigate the regular Playwright plugin to the Vite dev server URL while Tauri runs (`playwright-cdp` via CDP is safe)
-8. [ ] Perform debugging
-9. [ ] (If needed) Switch to Chrome + mock for full Lighthouse (`references/browser-lighthouse-mock.md`)

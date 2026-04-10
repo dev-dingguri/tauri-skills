@@ -256,28 +256,3 @@ If all pass, setup is complete. Tell the user: start dev with
 `pnpm dev:tauri` (multi-instance launcher from Step 7); for WebView
 debugging, restart Claude Code for MCP then `/tauri-webview-debug`;
 for tests, `/tauri-test-setup`; for shadcn components, `/shadcn`.
-
----
-
-## Checklist Summary
-
-1. [ ] Gather inputs (name, identifier, stack, shadcn, multi-window)
-2. [ ] Scaffold with `create-tauri-app` (merge into existing dir if needed)
-3. [ ] Rename scaffold refs (4 files: tauri.conf.json, Cargo.toml, main.rs, package.json)
-4. [ ] `.gitattributes` — BEFORE first `git add` (binary-asset safety)
-5. [ ] `tsconfig.json` — merge `tsconfig-add.jsonc` (alias + strict)
-6. [ ] `vite.config.ts` — copy template, adjust Tailwind / multi-page
-7. [ ] `vitest.config.ts` — copy template
-8. [ ] `biome.json` — copy template, adjust Tailwind directive
-9. [ ] `Cargo.toml` — drop `staticlib`, append `cargo-append.toml`
-10. [ ] `.cargo/config.toml` — copy to both root and `src-tauri/`
-11. [ ] `rustfmt.toml` — copy template
-12. [ ] shadcn/ui init (if chosen) — `--base` + `--preset`, verify `@/` sync, don't overwrite `package.json`
-13. [ ] `package.json` — `pnpm.onlyBuiltDependencies: ["esbuild"]` (pnpm v10+)
-14. [ ] Show-gate pattern — HTML class + CSS + JS gate (all three)
-15. [ ] Tauri capabilities — per-window JSON (if multi-window)
-16. [ ] /tauri-test-setup — Setup Checklist
-17. [ ] /tauri-webview-debug — Step 0 (`.mcp.json`)
-18. [ ] /tauri-multi-instance — copy `tauri-dev.mjs`, add `dev:tauri` script
-19. [ ] `CLAUDE.md` — from template
-20. [ ] Install + verify build
