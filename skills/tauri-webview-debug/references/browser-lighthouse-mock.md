@@ -1,17 +1,17 @@
 # Browser-Direct Lighthouse with `invoke()` Mock
 
-When you need a **full Lighthouse audit** — accurate Performance metrics
-(FCP, LCP, TTFB), full Best Practices, full Accessibility — CDP-over-WebView2
-isn't enough. Local file loading gives zero network latency, so timing
-metrics are meaningless, and Tauri-specific APIs break in a regular browser.
+For a **full Lighthouse audit** — accurate Performance metrics (FCP, LCP,
+TTFB), full Best Practices, full Accessibility — CDP-over-WebView2 isn't
+enough. Local file loading gives zero network latency, so timing metrics are
+meaningless, and Tauri-specific APIs break in a regular browser.
 
-The workaround: open Vite's dev server directly in Chrome and inject
-`invoke()` mocks via a Vite alias so production builds stay clean.
+Workaround: open Vite's dev server directly in Chrome and inject `invoke()`
+mocks via a Vite alias so production builds stay clean.
 
 ## Why `invoke()` Fails in a Browser
 
 `window.__TAURI__` only exists inside the Tauri WebView. A plain browser
-call to `invoke()` throws because the IPC bridge isn't there:
+call to `invoke()` throws — the IPC bridge isn't there:
 
 ```typescript
 import { invoke } from '@tauri-apps/api/core';
@@ -21,8 +21,8 @@ const result = await invoke('get_user_data'); // window.__TAURI__ is undefined
 ## Vite Alias Mock Injection
 
 Gate the mock on an env var so it only activates in browser-test mode.
-`resolve.alias` is resolved at build time, so mock code is never bundled
-into production — the conditional runs only when the config is loaded:
+`resolve.alias` resolves at build time, so mock code is never bundled into
+production — the conditional runs only when the config loads:
 
 ```typescript
 // vite.config.ts
@@ -57,6 +57,6 @@ BROWSER_TEST=true npx vite dev
 # Open the printed URL in Chrome and run Lighthouse
 ```
 
-The dev server port comes from `vite.config.ts` — if the project reads
-`TAURI_DEV_PORT` (the multi-instance contract), set that too, otherwise it
-uses the Vite default.
+Dev server port comes from `vite.config.ts` — if the project reads
+`TAURI_DEV_PORT` (the multi-instance contract), set that too; otherwise the
+Vite default applies.

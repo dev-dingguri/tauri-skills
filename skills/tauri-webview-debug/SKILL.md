@@ -8,26 +8,25 @@ description: >-
 
 # Tauri WebView Debug — Browser Debugging Tools for Tauri v2
 
-Workflow for debugging Tauri v2 WebViews using Playwright MCP (primary) and
-Chrome DevTools MCP (fallback) via the WebView2 CDP endpoint. Long-form
-templates and alternate paths live under `references/`:
+Debug Tauri v2 WebViews via the WebView2 CDP endpoint with Playwright MCP
+(primary) and Chrome DevTools MCP (fallback). Long-form templates and
+alternates live under `references/`:
 
 - `references/mcp-json-template.json` — `.mcp.json` with CDP-connected MCP servers
 - `references/alt-cdp-config.md` — config-file alternative to the env var path
 - `references/browser-lighthouse-mock.md` — browser-direct path for full Lighthouse
 
-> **External dependencies:** The MCP server template
-> (`references/mcp-json-template.json`) invokes `chrome-devtools-mcp@latest`
-> and `@playwright/mcp@latest` via `npx` at session start. `@latest` is
-> intentional so users track upstream MCP updates — pin versions in your
-> project's `.mcp.json` after copying if you need deterministic builds. See
-> "Why `cmd /c` on Windows?" in Step 0 for the shell invocation rationale.
+> **External dependencies:** `references/mcp-json-template.json` invokes
+> `chrome-devtools-mcp@latest` and `@playwright/mcp@latest` via `npx` at
+> session start. `@latest` is intentional so users track upstream MCP updates
+> — pin versions in your project's `.mcp.json` after copying for deterministic
+> builds. See "Why `cmd /c` on Windows?" in Step 0 for the shell rationale.
 
 ## Platform Check
 
 Tauri v2 uses different webview engines per platform. Only Windows
 (WebView2) supports CDP — macOS WKWebView and Linux WebKitGTK do not.
-This skill has only been tested on Windows.
+Tested on Windows only.
 
 | Platform | WebView Engine | CDP Support | Status |
 |----------|---------------|:-----------:|--------|
@@ -48,17 +47,16 @@ only option; external CDP tools do not apply.
 
 ## Step 0: Ensure `.mcp.json` Has CDP Servers
 
-Chrome DevTools MCP and Playwright MCP need CLI flags (`--browserUrl`,
-`--cdp-endpoint`) to connect to the Tauri WebView2 CDP port instead of
-launching their own browser. **These flags must be set in the MCP server
-configuration before the session starts** — they cannot be changed at
-runtime.
+Both MCPs need CLI flags (`--browserUrl`, `--cdp-endpoint`) to attach to
+the Tauri WebView2 CDP port instead of launching their own browser.
+**These flags must be set in the MCP server configuration before the
+session starts** — they cannot be changed at runtime.
 
-Check the project root for `.mcp.json`. If it does not exist, or does not
-contain `chrome-devtools-cdp` / `playwright-cdp` entries, copy
+Check the project root for `.mcp.json`. If missing, or lacking
+`chrome-devtools-cdp` / `playwright-cdp` entries, copy
 `references/mcp-json-template.json` into place. It pins both servers to
-the default CDP port `9222`; the multi-instance launcher rewrites the
-port in place if a different one is allocated.
+default CDP port `9222`; the multi-instance launcher rewrites the port in
+place if a different one is allocated.
 
 > **Why `cmd /c` on Windows?** `npx` is actually `npx.cmd` — a batch file
 > that requires shell interpretation. Without `cmd /c`, MCP server startup
@@ -69,9 +67,9 @@ port in place if a different one is allocated.
 > `chrome-devtools-cdp` / `playwright-cdp` for Tauri WebView2 debugging;
 > use the regular plugin versions for standalone browser work.
 
-If `.mcp.json` was just created or modified, **tell the user that a Claude
+If `.mcp.json` was just created or modified, **tell the user a Claude
 Code restart is required** for the new MCP servers to take effect. Do not
-proceed with CDP-dependent steps until the servers are available.
+proceed with CDP-dependent steps until they are available.
 
 ---
 
@@ -100,8 +98,8 @@ The CDP port is **process-level** — discarded when the terminal closes.
 **Recommended: the multi-instance launcher.** Invoke
 `/tauri-multi-instance` and follow its "From tauri-webview-debug"
 guidance — `node scripts/tauri-dev.mjs` handles port conflicts, sets
-`WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`, and updates `.mcp.json` in place
-if the CDP port changes (restart Claude Code to pick up the new port).
+`WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS`, and rewrites `.mcp.json` in
+place on CDP port change (restart Claude Code to pick up the new port).
 
 **Manual single-instance fallback:**
 
@@ -115,11 +113,11 @@ $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222"
 cargo tauri dev
 ```
 
-Since the binary is already compiled, `cargo tauri dev` only starts Vite
-and launches the app — typically under 10 seconds.
+With the binary already built, `cargo tauri dev` only starts Vite and
+launches the app — typically under 10 seconds.
 
 > **Only open the CDP port in development.** It is an unauthenticated
-> endpoint; exposing it in production lets external processes drive the
+> endpoint — exposing it in production lets external processes drive the
 > app.
 
 For a `tauri.conf.json`-based alternative (rare — conflicts with the
@@ -133,8 +131,8 @@ multi-instance launcher), see `references/alt-cdp-config.md`.
 accessibility tree (semantic, compact) and covers DOM, console, network,
 screenshots, and UI automation. Fall back to Chrome DevTools MCP
 (`chrome-devtools-cdp`) only for **performance tracing**
-(`performance_start_trace` / `performance_stop_trace`), which Playwright
-lacks.
+(`performance_start_trace` / `performance_stop_trace`) — Playwright lacks
+it.
 
 - Playwright MCP connects via `--cdp-endpoint http://127.0.0.1:9222`.
   Exclusive: `browser_snapshot` (accessibility tree).
@@ -157,7 +155,7 @@ lacks.
 On Windows, Node.js `fetch()` and Playwright resolve `localhost` to IPv6
 (`::1`), but WebView2 CDP only listens on IPv4 (`127.0.0.1`). **Always
 use `127.0.0.1` explicitly** — `http://localhost:9222` fails with
-`ECONNREFUSED`. This affects every CDP URL: Playwright `connectOverCDP()`,
+`ECONNREFUSED`. Affects every CDP URL: Playwright `connectOverCDP()`,
 `--cdp-endpoint`, `--browserUrl`, and Node.js readiness `fetch()` calls.
 
 > `curl` may still work with `localhost` because it tries both IPv4 and
@@ -165,8 +163,8 @@ use `127.0.0.1` explicitly** — `http://localhost:9222` fails with
 
 ### Multi-Window Page Selection
 
-When a Tauri app uses multiple WebView windows (e.g., main + overlay),
-CDP exposes multiple pages. Select the target:
+With multiple WebView windows (e.g., main + overlay), CDP exposes
+multiple pages. Select the target:
 
 - Chrome DevTools MCP: `list_pages` → `select_page`
 - Playwright MCP: `browser_tabs` to inspect
@@ -185,7 +183,7 @@ hot-reloads, and phantom `about:blank` windows.
 **`playwright-cdp` is safe** — it attaches to the existing WebView2 via
 CDP instead of navigating to a URL, so no extra HMR client is created.
 Another reason to prefer `playwright-cdp` over the regular Playwright
-plugin when debugging Tauri.
+plugin for Tauri.
 
 ### Verify CDP Connection
 
@@ -199,9 +197,8 @@ are configured.
 
 ## Step 3: What's Limited on WebView2 CDP
 
-Step 2 covered what the tools can do. This section is the inverse —
-what CDP can't cover, and what's only partial. If a capability isn't
-listed here, assume it works on both Playwright and Chrome DevTools MCP.
+The inverse of Step 2 — what CDP can't cover, and what's only partial.
+Anything not listed works on both Playwright and Chrome DevTools MCP.
 
 | Capability | Status | Why |
 |-----------|--------|-----|
@@ -219,14 +216,14 @@ browser-direct alternative in Step 4 (Chrome on localhost).
 
 ## Step 4: Browser-Direct Approach for Full Lighthouse
 
-`cargo tauri dev` runs a Vite dev server internally, accessible from any
-browser at `localhost:<TAURI_DEV_PORT>` (default `1420`). Opening that URL
-in Chrome gives you the same frontend with full Lighthouse support — but
-Tauri-specific `invoke()` calls fail because `window.__TAURI__` is absent
-outside the WebView.
+`cargo tauri dev` runs a Vite dev server internally at
+`localhost:<TAURI_DEV_PORT>` (default `1420`). Opening that URL in Chrome
+gives the same frontend with full Lighthouse support — but Tauri-specific
+`invoke()` calls fail because `window.__TAURI__` is absent outside the
+WebView.
 
-The workaround is a **Vite alias mock** gated on `BROWSER_TEST=true`, so
-mock code is never bundled into production. See
+Workaround: a **Vite alias mock** gated on `BROWSER_TEST=true`, so mock
+code is never bundled into production. See
 `references/browser-lighthouse-mock.md` for the full pattern
 (`vite.config.ts` alias, `src/mocks/tauri-core.ts` implementation, run
 command).
