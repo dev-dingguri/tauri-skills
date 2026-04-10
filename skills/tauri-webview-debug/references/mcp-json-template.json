@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "chrome-devtools-cdp": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl",
+        "http://127.0.0.1:9222"
+      ]
+    },
+    "playwright-cdp": {
+      "command": "cmd",
+      "args": [
+        "/c",
+        "npx",
+        "@playwright/mcp@latest",
+        "--cdp-endpoint",
+        "http://127.0.0.1:9222"
+      ]
+    }
+  }
+}
