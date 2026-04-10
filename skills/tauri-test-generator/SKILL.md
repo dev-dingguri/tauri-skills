@@ -14,14 +14,41 @@ description: >-
 
 Generate the right tests at the right layer by first understanding user journeys.
 Write for **user outcomes**, not code coverage — then map each journey step to
-the cheapest layer that verifies it. **Requires background:** `tauri-test-setup`
-defines the L1–L4 layer model and mock recipes.
+the cheapest layer that verifies it. The L1–L4 layer model is inlined below;
+invoke `tauri-test-setup` only for mock recipes and hybrid test infrastructure.
 
 ## When to Use
 
 Adding tests to a Tauri app, running a coverage audit, or generating tests after
 a feature ships. **Not for:** setting up test infrastructure from scratch — use
 `tauri-test-setup`.
+
+## Layer Model
+
+Every journey step maps to one of four test layers. This decides the tool, the
+effort, and whether automation is possible at all.
+
+| Layer | Tool | Coverage | Examples |
+|---|---|---|---|
+| **L1 — Pure Logic** | Rust `#[test]` / Vitest | State machines, calculations, serialization | Data aggregation, debounce, config parsing |
+| **L2 — Frontend Rendering** | Vitest + RTL + Tauri mock | React components, stores, conditional UI | Card rendering, toast lifecycle, slider defaults |
+| **L3 — WebView Integration** | Playwright / Chrome DevTools MCP (CDP) | Live DOM, screenshots, console errors | Multi-window layout, CSS transition, a11y audit |
+| **L4 — OS Integration** | Python pytest + pywinauto (partial) / Manual | Global key hooks, tray, registry, audio | OS hotkeys, tray menu, autostart, device detection |
+
+### Classification Criteria
+
+- **Frontend code calling Tauri `invoke`** → L2 (mock invoke)
+- **Code depending on Tauri events (`listen` / `emit`)** → L2 (mock listen)
+- **Code using `@tauri-apps/api/window`** → L2 (mock getCurrentWindow)
+- **Plain JS + Canvas outside React** (e.g., `overlay.html`) → L3 or L4:
+  - Verify canvas rendering only → L3 (CDP screenshot)
+  - OS-level input trigger (rdev, etc.) → L4 — CDP `press_key` fires
+    WebView-internal events only
+- **Direct OS API calls** (registry, audio devices, system tray) → L4
+- **Journey spanning OS trigger → WebView UI** → L3+L4 hybrid
+
+> Mirrors `tauri-test-setup` Step 1. These criteria are tied to Tauri API
+> structure and rarely change, but update both on drift.
 
 ## Workflow
 
@@ -94,7 +121,7 @@ Score each gap to decide what to write first:
 
 For each prioritized gap:
 
-1. **Assign the layer** using `tauri-test-setup` Step 1 Classification Criteria.
+1. **Assign the layer** using the Classification Criteria from the Layer Model section above.
 2. **Find existing patterns** before writing code: locate a test file at the
    **same layer** testing a **similar feature**, copy its structure (imports,
    mock setup, beforeEach, assertion style, naming), and adapt for the new step.
