@@ -9,6 +9,19 @@
             "command": "bash .claude/hooks/enforce-english-commit.sh"
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/check-proprietary-names.sh"
+          },
+          {
+            "type": "prompt",
+            "prompt": "This is a public open-source repository. Check if the content being written contains any specific company names, product names, or internal project names that could identify a proprietary organization or product. Generic technical terms are fine — only block identifiable proper nouns that refer to specific companies or their internal projects. If found, BLOCK and list the problematic names. Tool input: $ARGUMENTS"
+          }
+        ]
       }
     ]
   }
