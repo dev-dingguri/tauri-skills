@@ -25,6 +25,13 @@ CDP-based tools (Chrome DevTools MCP, Playwright MCP) can **only connect directl
 On macOS/Linux, the built-in inspector (right-click → Inspect) works per Tauri docs,
 but external tool integration and this skill's workflow have not been tested.
 
+> **Multi-instance note**: Default ports below (Vite 1420, CDP 9222) assume a single running
+> instance. When running multiple instances (worktrees, parallel projects), use the
+> `scripts/tauri-dev.mjs` launcher from `/tauri-setup` — it auto-detects free ports and
+> sets `TAURI_DEV_PORT` / `TAURI_CDP_PORT` environment variables. The env vars propagate
+> to all components: Vite, CDP, and test fixtures. The launcher also updates `.mcp.json`
+> with the allocated CDP port (restart Claude Code to pick up changes).
+
 ---
 
 ## Step 0: Ensure `.mcp.json` Has CDP Servers
@@ -34,7 +41,9 @@ to the Tauri WebView2 CDP port instead of launching their own browser. These fla
 in the MCP server configuration **before the session starts** — they cannot be changed at runtime.
 
 **Check** the project root for `.mcp.json`. If it does not exist, or does not contain
-`chrome-devtools-cdp` and `playwright-cdp` entries, create/update it:
+`chrome-devtools-cdp` and `playwright-cdp` entries, create/update it.
+Use the CDP port configured for this instance (default 9222; `scripts/tauri-dev.mjs` updates
+this file automatically when a different port is allocated):
 
 ```json
 {
@@ -111,6 +120,12 @@ Remove `"staticlib"` if present — it adds an extra full compilation pass
 Once the build completes, start the app with a CDP debugging port.
 The environment variable is **process-level** — discarded when the terminal closes.
 
+**Recommended: use the multi-instance launcher** (handles port conflicts automatically):
+```bash
+node scripts/tauri-dev.mjs
+```
+
+Manual launch (single instance, default ports):
 ```bash
 WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" cargo tauri dev
 ```
@@ -141,6 +156,8 @@ Note: this overrides wry's default flags, so you must restore them manually:
 ```
 
 > **Warning**: Only open the CDP port in **development**. Exposing it in production allows external actors to control the app.
+> When using `scripts/tauri-dev.mjs`, CDP port is set via environment variable instead —
+> no need to modify `tauri.conf.json`.
 
 ---
 
@@ -296,11 +313,12 @@ available. Verify connection after launching the app:
 
 ```
 cargo tauri dev
-  ├─ Vite dev server (localhost:1420)  ← accessible from any browser
+  ├─ Vite dev server (localhost:<TAURI_DEV_PORT>)  ← accessible from any browser
   └─ Tauri WebView2 (loads the same URL)
 ```
 
-Opening `http://localhost:1420` in Chrome gives you the same frontend with full Lighthouse support.
+Opening the Vite dev server URL in Chrome gives you the same frontend with full Lighthouse support.
+The port is `1420` by default, or the value allocated by `scripts/tauri-dev.mjs`.
 
 ### Problem: invoke() Fails
 
@@ -343,7 +361,7 @@ export async function invoke<T>(cmd: string, _args?: Record<string, unknown>): P
 
 Run:
 ```bash
-BROWSER_TEST=true npx vite dev   # Open localhost:1420 in Chrome and run Lighthouse
+BROWSER_TEST=true npx vite dev   # Open the URL shown in terminal in Chrome, then run Lighthouse
 ```
 
 > Vite's `resolve.alias` is resolved at build time, so mock code is never included in production builds.
@@ -389,9 +407,9 @@ BROWSER_TEST=true npx vite dev   # Open localhost:1420 in Chrome and run Lightho
 1. [ ] Verify platform (Windows?)
 2. [ ] Ensure `.mcp.json` has `chrome-devtools-cdp` and `playwright-cdp` entries (Step 0)
 3. [ ] Build Rust backend (`cargo build --manifest-path src-tauri/Cargo.toml`) — long timeout / background
-4. [ ] Launch with CDP port (`WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" cargo tauri dev`)
+4. [ ] Launch with CDP port (`node scripts/tauri-dev.mjs`, or manually: `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" cargo tauri dev`)
 5. [ ] Verify connection: Playwright `browser_tabs` or Chrome DevTools `list_pages` should show Tauri app pages, NOT `about:blank`
 6. [ ] Select target page if multi-window
-7. [ ] **NEVER** navigate the regular Playwright plugin to `localhost:1420` while Tauri is running (`playwright-cdp` via CDP is safe)
+7. [ ] **NEVER** navigate the regular Playwright plugin to the Vite dev server URL while Tauri is running (`playwright-cdp` via CDP is safe)
 8. [ ] Perform debugging
 9. [ ] (If needed) Switch to Chrome + Mock for full Lighthouse audit

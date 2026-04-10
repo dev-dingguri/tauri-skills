@@ -210,12 +210,12 @@ export default defineConfig({
       input: multiPageInput,
     },
   },
-  // Tauri dev server
+  // Tauri dev server — port from env var for multi-instance support (see scripts/tauri-dev.mjs)
   server: {
-    port: 1420,
+    port: parseInt(process.env.TAURI_DEV_PORT || "1420"),
     strictPort: true,
     hmr: process.env.TAURI_DEV_HOST
-      ? { protocol: "ws", host: process.env.TAURI_DEV_HOST, port: 1421 }
+      ? { protocol: "ws", host: process.env.TAURI_DEV_HOST, port: parseInt(process.env.TAURI_DEV_PORT || "1420") + 1 }
       : undefined,
     watch: {
       ignored: ["**/src-tauri/**"],
@@ -593,10 +593,160 @@ pnpm test
 ```
 
 If all pass, setup is complete. Inform the user:
-- To start dev: `pnpm tauri dev`
+- To start dev: `pnpm tauri dev` (or `node scripts/tauri-dev.mjs` for multi-instance)
 - For WebView debugging: restart Claude Code for MCP servers, then follow `/tauri-webview-debug`
 - For adding tests: follow `/tauri-test-setup`
 - For shadcn components: follow `/shadcn`
+
+---
+
+## Multi-Instance Development
+
+When running multiple Tauri instances simultaneously (e.g., git worktrees, parallel projects),
+the default ports (Vite 1420, CDP 9222) will conflict. Add a launcher script that auto-detects
+free ports and configures all components consistently.
+
+### Setup
+
+Add `scripts/tauri-dev.mjs` to the project:
+
+```javascript
+#!/usr/bin/env node
+// scripts/tauri-dev.mjs
+// Multi-instance dev launcher — finds free ports and starts cargo tauri dev.
+// Prevents port conflicts when running multiple Tauri instances (worktrees, projects).
+//
+// Usage:
+//   node scripts/tauri-dev.mjs          (auto-detect free ports)
+//   pnpm dev:tauri                      (via package.json script)
+
+import net from "node:net";
+import { spawn } from "node:child_process";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { resolve } from "node:path";
+
+const VITE_BASE = 1420;
+const CDP_BASE = 9222;
+// Why step of 10: leaves room for HMR (+1) and future ports without overlap
+const PORT_STEP = 10;
+const MAX_ATTEMPTS = 10;
+
+function isPortFree(port) {
+  return new Promise((res) => {
+    const server = net.createServer();
+    server.once("error", () => res(false));
+    server.listen(port, "127.0.0.1", () => server.close(() => res(true)));
+  });
+}
+
+async function findFreePort(base) {
+  // Why sequential scan: gives predictable, memorable ports (1420 → 1430 → 1440)
+  for (let i = 0; i < MAX_ATTEMPTS; i++) {
+    const port = base + i * PORT_STEP;
+    if (await isPortFree(port)) return port;
+  }
+  // Fallback: let OS pick
+  return new Promise((res) => {
+    const server = net.createServer();
+    server.listen(0, "127.0.0.1", () => {
+      const port = server.address().port;
+      server.close(() => res(port));
+    });
+  });
+}
+
+function updateMcpJson(cdpPort) {
+  const mcpPath = resolve(".mcp.json");
+  if (!existsSync(mcpPath)) return;
+
+  try {
+    const mcp = JSON.parse(readFileSync(mcpPath, "utf-8"));
+    const cdpUrl = `http://127.0.0.1:${cdpPort}`;
+    let changed = false;
+
+    for (const [key, flag] of [
+      ["playwright-cdp", "--cdp-endpoint"],
+      ["chrome-devtools-cdp", "--browserUrl"],
+    ]) {
+      const args = mcp.mcpServers?.[key]?.args;
+      if (!args) continue;
+      const idx = args.indexOf(flag);
+      if (idx !== -1 && args[idx + 1] !== cdpUrl) {
+        args[idx + 1] = cdpUrl;
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      writeFileSync(mcpPath, JSON.stringify(mcp, null, 2) + "\n");
+      console.log(`  .mcp.json updated → CDP ${cdpUrl}`);
+      console.log("  Restart Claude Code to pick up the new MCP config\n");
+    }
+  } catch {
+    // .mcp.json parse error — skip
+  }
+}
+
+async function main() {
+  const vitePort = await findFreePort(VITE_BASE);
+  const cdpPort = await findFreePort(CDP_BASE);
+
+  console.log(`\n  Vite  → http://localhost:${vitePort}`);
+  console.log(`  CDP   → http://127.0.0.1:${cdpPort}\n`);
+
+  updateMcpJson(cdpPort);
+
+  // Why --config: overrides devUrl via JSON Merge Patch (RFC 7396)
+  // without modifying tauri.conf.json on disk
+  const configOverride = JSON.stringify({
+    build: { devUrl: `http://localhost:${vitePort}` },
+  });
+
+  const child = spawn("cargo", ["tauri", "dev", "--config", configOverride], {
+    env: {
+      ...process.env,
+      TAURI_DEV_PORT: String(vitePort),
+      TAURI_CDP_PORT: String(cdpPort),
+      WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${cdpPort}`,
+    },
+    stdio: "inherit",
+    shell: true,
+  });
+
+  child.on("exit", (code) => process.exit(code ?? 1));
+}
+
+main();
+```
+
+Add the npm script to `package.json`:
+
+```json
+{
+  "scripts": {
+    "dev:tauri": "node scripts/tauri-dev.mjs"
+  }
+}
+```
+
+### How It Works
+
+```
+node scripts/tauri-dev.mjs
+  │
+  ├─ Scan ports: 1420 → 1430 → 1440 ... (step 10)
+  ├─ Scan ports: 9222 → 9232 → 9242 ... (step 10)
+  ├─ Update .mcp.json CDP URLs (if exists and port changed)
+  ├─ Set env: TAURI_DEV_PORT, TAURI_CDP_PORT, WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS
+  └─ cargo tauri dev --config '{"build":{"devUrl":"http://localhost:<port>"}}'
+       │
+       ├─ beforeDevCommand (pnpm dev) → Vite reads TAURI_DEV_PORT
+       └─ WebView2 opens devUrl (overridden via --config)
+```
+
+> **`.mcp.json` note**: The script updates `.mcp.json` automatically when the CDP port
+> changes from the current config. However, MCP server configs are fixed at session start —
+> **restart Claude Code** after port changes for the MCP tools to connect to the correct port.
 
 ---
 
@@ -620,4 +770,5 @@ If all pass, setup is complete. Inform the user:
 16. [ ] /tauri-test-setup — Setup Checklist (vitest setup, mocks)
 17. [ ] /tauri-webview-debug — Step 0 (.mcp.json)
 18. [ ] CLAUDE.md — overview, architecture, conventions, /tauri-docs directive (no tech stack)
-19. [ ] Install dependencies + verify build
+19. [ ] `scripts/tauri-dev.mjs` — multi-instance dev launcher + `dev:tauri` npm script
+20. [ ] Install dependencies + verify build

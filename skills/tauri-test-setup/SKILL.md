@@ -216,7 +216,8 @@ Key constraints from a testing perspective:
 import { chromium, test as base } from "@playwright/test";
 
 // Why 127.0.0.1: On Windows, localhost resolves to IPv6 (::1) but WebView2 CDP only listens on IPv4
-const CDP_URL = "http://127.0.0.1:9222";
+// Why env var: supports multi-instance dev (worktrees, parallel projects) via scripts/tauri-dev.mjs
+const CDP_URL = `http://127.0.0.1:${process.env.TAURI_CDP_PORT || "9222"}`;
 
 export const test = base.extend<{ tauriPage: Page }>({
   tauriPage: async ({}, use) => {
@@ -412,17 +413,20 @@ take several minutes, causing CLI tool timeouts before the app even starts.
 **Solution: split build and launch into two steps.**
 
 ```
+CDP_PORT = $TAURI_CDP_PORT (default: 9222)
+
 Step 1: Check if app is already running on CDP port
-  curl -s http://127.0.0.1:9222/json/version → success? → skip to E2E
+  curl -s http://127.0.0.1:${CDP_PORT}/json/version → success? → skip to E2E
 
 Step 2: Build only (long timeout, e.g., 10 min)
   cargo build --manifest-path src-tauri/Cargo.toml
 
 Step 3: Launch (fast — binary already compiled)
-  WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9222" cargo tauri dev &
+  node scripts/tauri-dev.mjs &
+  (or manually: WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=${CDP_PORT}" cargo tauri dev &)
 
 Step 4: Poll CDP until ready (up to 30s)
-  curl -s http://127.0.0.1:9222/json/version
+  curl -s http://127.0.0.1:${CDP_PORT}/json/version
 ```
 
 Why this works: `cargo tauri dev` internally runs `cargo build` first. If the binary
@@ -479,9 +483,11 @@ WebView2 CDP only sees windows that exist at connection time.
 ```python
 # tests-native/helpers/cdp.py
 from contextlib import contextmanager
+import os
 import time
 
-CDP_PORT = 9222
+# Why env var: supports multi-instance dev (worktrees, parallel projects) via scripts/tauri-dev.mjs
+CDP_PORT = int(os.environ.get("TAURI_CDP_PORT", "9222"))
 
 @contextmanager
 def connect_cdp(timeout: float = 10):
@@ -518,7 +524,7 @@ The `app` fixture must pass the CDP environment variable to `start_app()`:
 
 ```python
 # conftest.py
-CDP_PORT = 9222
+CDP_PORT = int(os.environ.get("TAURI_CDP_PORT", "9222"))
 
 @pytest.fixture
 def app(exe_path):
@@ -689,6 +695,6 @@ When building tests for a new Tauri v2 project:
 8. [ ] Set `.tooltip()` on `TrayIconBuilder` for UIA discoverability
 9. [ ] Set up `tests-native/` with pytest + pywinauto for L4 automatable items
 10. [ ] Add `playwright` to `tests-native/pyproject.toml` + `helpers/cdp.py` for L3+L4 hybrid
-11. [ ] Pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS` CDP port in `app` fixture
+11. [ ] Pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS` CDP port in `app` fixture (read `TAURI_CDP_PORT` env var, default 9222)
 12. [ ] Add `data-testid` to WebView elements used in hybrid tests (available on next build)
 13. [ ] Document remaining L4 manual items with rationale
