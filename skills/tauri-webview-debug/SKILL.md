@@ -190,41 +190,23 @@ are configured.
 
 ---
 
-## Step 3: Limitations — What Works and What Doesn't on WebView2 CDP
+## Step 3: What's Limited on WebView2 CDP
 
-### Works Well
+Step 2 covered what the tools can do. This section is the inverse —
+what CDP can't cover, and what's only partial. If a capability isn't
+listed here, assume it works on both Playwright and Chrome DevTools MCP.
 
-| Capability | Tool |
-|-----------|------|
-| DOM inspection / CSS editing | Both |
-| Console logs | Both |
-| Network request analysis | Both |
-| Screenshots | Both |
-| JS execution | Both |
-| UI automation (click, type) | Both |
-| CLS / TBT measurement | Chrome DevTools (performance trace) |
-| Accessibility checks (DOM-based) | Both |
+| Capability | Status | Why |
+|-----------|--------|-----|
+| **Lighthouse Performance (full)** | ❌ | Local file loading → zero network latency → FCP, LCP, TTFB inaccurate |
+| **Lighthouse Best Practices** | Partial | HTTPS, HTTP/2, and other server-related checks don't apply |
+| **Lighthouse SEO / PWA** | N/A | Desktop apps are not crawled and are already native |
+| **Tauri `invoke()` debugging** | ❌ | CDP only accesses the webview layer — no Rust backend debugging |
+| **`rdev` keyboard hook testing** | ❌ | CDP `press_key` fires WebView-internal events — not OS-level, so global `rdev` hooks miss them |
 
-### Does Not Work or Is Limited
-
-| Capability | Reason |
-|-----------|--------|
-| **Lighthouse Performance (full)** | Local file loading → zero network latency → FCP, LCP, TTFB inaccurate |
-| **Lighthouse SEO** | Desktop apps are not crawled |
-| **Lighthouse PWA** | Already a native app |
-| **Best Practices (partial)** | HTTPS, HTTP/2, and other server-related checks don't apply |
-| **Tauri `invoke()` debugging** | CDP only accesses the webview layer — no Rust backend debugging |
-| **`rdev` keyboard hook testing** | Playwright / Chrome DevTools `press_key` fire WebView-internal events — not OS-level, so global `rdev` hooks may miss them |
-
-### Lighthouse Categories Summary
-
-| Category | WebView2 Direct | Chrome on localhost |
-|----------|:--------------:|:-------------------:|
-| Performance | Partial (CLS, TBT only) | **Full** |
-| Accessibility | **Full** | **Full** |
-| Best Practices | Partial | **Full** |
-| SEO | N/A | N/A (it's an app) |
-| PWA | N/A | N/A (it's an app) |
+**Lighthouse Accessibility is the exception** — it's DOM-based and runs
+fully on WebView2. For the other Lighthouse categories, use the
+browser-direct alternative in Step 4 (Chrome on localhost).
 
 ---
 
@@ -241,16 +223,3 @@ mock code is never bundled into production. See
 `references/browser-lighthouse-mock.md` for the full pattern
 (`vite.config.ts` alias, `src/mocks/tauri-core.ts` implementation, run
 command).
-
----
-
-## Workflow Summary: When to Use Which Approach
-
-| Purpose | Tool | invoke Mock Needed |
-|---------|------|:-----------------:|
-| DOM / CSS / console / network | Playwright MCP | No |
-| Accessibility tree snapshot | Playwright MCP | No |
-| Screenshots | Playwright MCP | No |
-| UI automation testing | Playwright MCP | No |
-| CLS, TBT performance trace | Chrome DevTools MCP | No |
-| Full Lighthouse audit | Chrome on localhost | **Yes** |
