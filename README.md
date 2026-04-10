@@ -12,12 +12,15 @@ npx skills add dev-dingguri/tauri-skills
 
 | Skill | What It Does |
 |-------|-------------|
-| **tauri-setup** | End-to-end project scaffolding with config sync, build optimization, and show-gate pattern |
-| **tauri-docs** | Verifies Tauri APIs against local docs before writing code. Includes [gotchas.md](skills/tauri-docs/gotchas.md) for pitfalls not in official docs |
-| **tauri-test-setup** | Layer-based test strategy (L1 unit → L2 component → L3 CDP → L4 manual) with Tauri API mock recipes |
-| **tauri-webview-debug** | WebView2 debugging via CDP — Playwright MCP primary, Chrome DevTools MCP for perf tracing |
+| **tauri-setup** | Scaffolds a new Tauri v2 + React project via `create-tauri-app`, configures tooling (Biome, Vitest, Playwright, shadcn/ui), and orchestrates the other skills during initial project creation |
+| **tauri-docs** | Documentation-first workflow — verifies Tauri APIs against local docs before writing code. Ships with [gotchas.md](skills/tauri-docs/gotchas.md) for pitfalls not covered in official docs |
+| **tauri-test-setup** | Test infrastructure guide with layer classification (L1 Rust unit / L2 Vitest + RTL + Tauri mock / L3 Playwright CDP / L4 pywinauto + manual) and per-layer recipes |
+| **tauri-test-generator** | Journey-based test generation — discovers user flows from the codebase, identifies coverage gaps, and writes tests at the cheapest layer that verifies each gap |
+| **tauri-webview-debug** | WebView2 debugging via CDP — Playwright MCP (primary) + Chrome DevTools MCP (fallback). Handles `.mcp.json` setup and Lighthouse audits |
+| **tauri-multi-instance** | Port allocation contract for running multiple Tauri instances in parallel (git worktrees, side-by-side projects). Provides the `tauri-dev.mjs` launcher and the env var contract shared by Vite, CDP, and test fixtures |
+| **tauri-os-automation** | Windows L4 automation constraints — system tray, registry, global key hooks via pywinauto / UIA / winreg. Defines what is automatable and what must stay manual |
 
-Each skill works independently. `tauri-setup` orchestrates the others during initial project creation.
+Each skill works independently. `tauri-setup` orchestrates test/debug/multi-instance skills during initial project creation. `tauri-test-setup` and `tauri-test-generator` delegate L4-specific work to `tauri-os-automation`.
 
 ### Gotchas Included
 
@@ -33,7 +36,10 @@ Each skill works independently. `tauri-setup` orchestrates the others during ini
 
 ## Platform Support
 
-`tauri-webview-debug` L3 CDP features require Windows (WebView2). All other skills work cross-platform. On macOS/Linux, use the browser-direct approach for debugging.
+These skills are developed and tested on **Windows** (MSVC toolchain, WebView2). Key constraints:
+- `tauri-os-automation` is strictly Windows (pywinauto / UIA / winreg)
+- `tauri-webview-debug` CDP relies on WebView2; macOS/Linux fall back to browser-direct debugging (documented in the skill)
+- Other skills are cross-platform in principle but unverified
 
 ## Contributing
 
