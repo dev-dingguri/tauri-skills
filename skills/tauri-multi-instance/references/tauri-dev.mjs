@@ -89,6 +89,10 @@ async function main() {
     build: { devUrl: `http://localhost:${vitePort}` },
   });
 
+  // Why no shell: configOverride is a JSON string with quotes and braces.
+  // shell:true would reserialize argv through cmd.exe and risk quoting
+  // corruption; direct CreateProcess preserves argv verbatim. cargo is a
+  // real .exe from rustup, not a .cmd wrapper, so shell:true is unneeded.
   const child = spawn("cargo", ["tauri", "dev", "--config", configOverride], {
     env: {
       ...process.env,
@@ -100,7 +104,6 @@ async function main() {
       WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${cdpPort}`,
     },
     stdio: "inherit",
-    shell: true,
   });
 
   child.on("exit", (code) => process.exit(code ?? 1));
