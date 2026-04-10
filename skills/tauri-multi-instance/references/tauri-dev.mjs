@@ -93,6 +93,9 @@ async function main() {
     env: {
       ...process.env,
       TAURI_DEV_PORT: String(vitePort),
+      // Pass-through: consumers may set TAURI_DEV_HOST for HMR host override.
+      // Launcher does not assign a value but must propagate the contract var.
+      TAURI_DEV_HOST: process.env.TAURI_DEV_HOST ?? "",
       TAURI_CDP_PORT: String(cdpPort),
       WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${cdpPort}`,
     },
