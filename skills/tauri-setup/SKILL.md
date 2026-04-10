@@ -12,6 +12,10 @@ description: >-
 > **Platform note:** This skill targets Windows (MSVC toolchain, WebView2).
 > macOS/Linux setup has not been tested.
 
+> **External dependencies:** This skill runs `create-tauri-app`, `shadcn`,
+> `pnpm`, and `cargo`, which fetch code from the npm registry and crates.io
+> during setup. Review the commands in Step 2 and Step 7 before executing.
+
 End-to-end setup for a new Tauri v2 desktop app project. Configuration
 file bodies live in `references/templates/` — this SKILL.md decides
 *when* and *why* to apply each; the templates hold the *what*. Flow:

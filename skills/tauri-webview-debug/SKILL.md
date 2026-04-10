@@ -16,6 +16,13 @@ templates and alternate paths live under `references/`:
 - `references/alt-cdp-config.md` — config-file alternative to the env var path
 - `references/browser-lighthouse-mock.md` — browser-direct path for full Lighthouse
 
+> **External dependencies:** The MCP server template
+> (`references/mcp-json-template.json`) invokes `chrome-devtools-mcp@latest`
+> and `@playwright/mcp@latest` via `npx` at session start. `@latest` is
+> intentional so users track upstream MCP updates — pin versions in your
+> project's `.mcp.json` after copying if you need deterministic builds. See
+> "Why `cmd /c` on Windows?" in Step 0 for the shell invocation rationale.
+
 ## Platform Check
 
 Tauri v2 uses different webview engines per platform. Only Windows

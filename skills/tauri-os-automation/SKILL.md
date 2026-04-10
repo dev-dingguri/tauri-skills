@@ -15,6 +15,13 @@ description: >-
 > **Platform note:** Windows-only. All gotchas below are WebView2 / UIA /
 > winreg specific; macOS and Linux equivalents are unverified.
 
+> **Reference-only skill:** This skill documents L4 test automation patterns
+> (pywinauto, UIA, `winreg` for registry read/backup/restore, `FindWindowW`
+> for window polling) consumed by `tauri-test-setup` and
+> `tauri-test-generator`. It does not execute the patterns itself. Generated
+> L4 tests require an interactive desktop session and may mutate
+> `HKCU\...\Run` (with backup/restore fixtures) when run.
+
 Accumulated Windows gotchas for Tauri v2 **L4 (OS-level) test automation**.
 The same pitfalls hit every new L4 test across every skill that sets up or
 generates them — this skill is the single source of truth so the knowledge

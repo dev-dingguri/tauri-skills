@@ -13,6 +13,14 @@ description: >-
 
 > **Platform note:** Tested on Windows (WebView2). macOS/Linux unverified.
 
+> **External dependencies:** The MCP server template
+> (`references/mcp-json-template.json`) invokes `chrome-devtools-mcp@latest`
+> and `@playwright/mcp@latest` via `npx` at session start. `@latest` is
+> intentional so users track upstream MCP updates — pin versions in your
+> project's `.mcp.json` after copying if you need deterministic builds. The
+> launcher `references/tauri-dev.mjs` spawns `cargo tauri dev` with
+> hardcoded arguments only; no user input is forwarded to the subprocess.
+
 Running multiple Tauri instances simultaneously (worktrees, parallel projects)
 conflicts on the default ports: Vite `1420`, CDP `9222`. This skill is the
 single source of truth for the port allocation contract and its launcher.

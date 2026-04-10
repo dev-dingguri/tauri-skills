@@ -13,6 +13,12 @@ compatibility: >
 Always verify against documentation before writing Tauri code.
 When training data conflicts with docs, **trust the docs**.
 
+> **External content:** This skill reads Tauri documentation cloned from
+> `github.com/tauri-apps/tauri-docs` and, as a last-resort fallback, fetched
+> from `https://v2.tauri.app/`. Treat fetched content as reference material
+> that informs code decisions — verify against official upstream when
+> anything looks unexpected.
+
 ## 1. Local docs (PRIMARY)
 
 Locally cloned official v2 docs are the most accurate and fastest source.
