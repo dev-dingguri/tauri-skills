@@ -89,7 +89,8 @@ cargo build --manifest-path src-tauri/Cargo.toml
 > runs are incremental. On memory-constrained machines, set `jobs = 2`
 > in `src-tauri/.cargo/config.toml` and drop `"staticlib"` from
 > `Cargo.toml` `[lib] crate-type` (iOS/mobile only — adds a full
-> extra pass).
+> extra pass). If the config file is off-limits, pass `-j 2` directly
+> on the `cargo build` line instead.
 
 ### Step 1b: Launch with CDP Port (fast — binary already built)
 
