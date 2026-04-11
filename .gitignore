@@ -1,6 +1,7 @@
 node_modules/
 .DS_Store
 Thumbs.db
+.worktrees/
 
 # Proprietary name blocklist (contains company/project names)
 .claude/hooks/blocklist.txt
