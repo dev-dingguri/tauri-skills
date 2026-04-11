@@ -21,10 +21,15 @@ fi
 
 echo "=== Updating Tauri local docs ==="
 
-# If cloned directories don't exist, abort without recording .last_updated
-if [ ! -d "$TAURI_REF_DIR/tauri-docs" ] || [ ! -d "$TAURI_REF_DIR/plugins-workspace" ]; then
-  echo "⚠ Local docs not cloned. Run the Local Docs Setup in SKILL.md first."
-  exit 1
+# Bootstrap: clone missing repos so first-run setup is a single command.
+if [ ! -d "$TAURI_REF_DIR/tauri-docs" ]; then
+  echo "Cloning tauri-docs (v2)..."
+  git clone --depth 1 -b v2 https://github.com/tauri-apps/tauri-docs.git "$TAURI_REF_DIR/tauri-docs" || exit 1
+fi
+
+if [ ! -d "$TAURI_REF_DIR/plugins-workspace" ]; then
+  echo "Cloning plugins-workspace (v2)..."
+  git clone --depth 1 -b v2 https://github.com/tauri-apps/plugins-workspace.git "$TAURI_REF_DIR/plugins-workspace" || exit 1
 fi
 
 echo "[1/4] tauri-docs (v2)..."

@@ -73,13 +73,8 @@ Add the following to your Tauri project's CLAUDE.md to guarantee skill usage:
 
 ## Local Docs Setup
 
-If `references/tauri-docs/` doesn't exist:
+Run `update.sh` — it clones missing repos on first run and pulls updates afterward:
 
 ```bash
-cd <this-skill-directory>/references
-git clone --depth 1 -b v2 https://github.com/tauri-apps/tauri-docs.git
-git clone --depth 1 -b v2 https://github.com/tauri-apps/plugins-workspace.git
-bash update.sh
+bash <this-skill-directory>/references/update.sh
 ```
-
-To update existing docs: `bash <this-skill-directory>/references/update.sh`
