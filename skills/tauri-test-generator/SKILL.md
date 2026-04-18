@@ -9,7 +9,7 @@ description: >-
 
 # Tauri Test Generator
 
-> **Platform note:** L3 tests are cross-platform, but L4 patterns (CDP, pywinauto, UIA)
+> **Platform note:** L2 tests are cross-platform, but L3/L4 patterns (CDP, pywinauto, UIA)
 > have only been tested on Windows. macOS/Linux equivalents are unverified.
 
 Generate the right tests at the right layer by first understanding user journeys.
@@ -46,9 +46,6 @@ effort, and whether automation is possible at all.
     WebView-internal events only
 - **Direct OS API calls** (registry, audio devices, system tray) → L4
 - **Journey spanning OS trigger → WebView UI** → L3+L4 hybrid
-
-> Mirrors `tauri-test-setup` Step 1. These criteria are tied to Tauri API
-> structure and rarely change, but update both on drift.
 
 ## Workflow
 

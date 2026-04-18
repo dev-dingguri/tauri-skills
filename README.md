@@ -12,15 +12,15 @@ npx skills add dev-dingguri/tauri-skills
 
 | Skill | What It Does |
 |-------|-------------|
-| **tauri-setup** | Scaffolds a new Tauri v2 + React project via `create-tauri-app`, configures tooling (Biome, Vitest, Playwright, shadcn/ui), and orchestrates the other skills during initial project creation |
+| **tauri-setup** | Scaffolds a new Tauri v2 + React project via `create-tauri-app`, configures tooling (Biome, Vitest, Playwright, shadcn/ui), and orchestrates webview-debug and multi-instance skills during initial project creation |
 | **tauri-docs** | Documentation-first workflow — verifies Tauri APIs against local docs before writing code. Ships with [gotchas.md](skills/tauri-docs/gotchas.md) for pitfalls not covered in official docs |
-| **tauri-test-setup** | Test infrastructure guide with layer classification (L1 Rust unit / L2 Vitest + RTL + Tauri mock / L3 Playwright CDP / L4 pywinauto + manual) and per-layer recipes |
+| **tauri-test-setup** | Test infrastructure guide with layer classification (L2 Vitest + RTL + Tauri mock / L3 Playwright CDP / L4 pywinauto + manual) and per-layer recipes |
 | **tauri-test-generator** | Journey-based test generation — discovers user flows from the codebase, identifies coverage gaps, and writes tests at the cheapest layer that verifies each gap |
 | **tauri-webview-debug** | WebView2 debugging via CDP — Playwright MCP (primary) + Chrome DevTools MCP (fallback). Handles `.mcp.json` setup and Lighthouse audits |
 | **tauri-multi-instance** | Port allocation contract for running multiple Tauri instances in parallel (git worktrees, side-by-side projects). Provides the `tauri-dev.mjs` launcher and the env var contract shared by Vite, CDP, and test fixtures |
 | **tauri-os-automation** | Windows L4 automation constraints — system tray, registry, global key hooks via pywinauto / UIA / winreg. Defines what is automatable and what must stay manual |
 
-Each skill works independently. `tauri-setup` orchestrates test/debug/multi-instance skills during initial project creation. `tauri-test-setup` and `tauri-test-generator` delegate L4-specific work to `tauri-os-automation`.
+Each skill works independently. `tauri-setup` orchestrates webview-debug and multi-instance skills during initial project creation. `tauri-test-setup` and `tauri-test-generator` delegate L4-specific work to `tauri-os-automation`.
 
 ### Gotchas Included
 

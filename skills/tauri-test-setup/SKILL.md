@@ -10,10 +10,10 @@ description: >-
   adding individual test cases.
 ---
 
-# Tauri v2 Testing — Layer-Based Test Strategy
+# Tauri v2 Testing — Layer-Based Test Infrastructure
 
-> **Platform note:** L3 (Vitest + RTL) is cross-platform, but L4 (CDP,
-> pywinauto, UIA) has only been tested on Windows. macOS/Linux
+> **Platform note:** L2 (Vitest + RTL) is cross-platform, but L3/L4
+> (CDP, pywinauto, UIA) have only been tested on Windows. macOS/Linux
 > equivalents are unverified.
 
 Recipes under `references/recipes/`:
@@ -34,62 +34,19 @@ External delegations:
 - `/tauri-os-automation` — Windows L4 pywinauto patterns (tray,
   registry, window polling, key-hook constraints)
 
-## Core Principle
-
-A Tauri app is a **web frontend + native backend** dual architecture.
-A single tool cannot test everything. Pick the right tool per layer
-and clearly delineate what cannot be automated.
-
 ---
 
-## Step 1: Classify Test Layers
-
-Classify every feature into one of four layers. This decides tool,
-effort, and whether automation is possible at all.
+## Step 1: Test Layers & Tool Selection
 
 | Layer | Tool | Coverage | Examples |
 |---|---|---|---|
-| **L1 — Pure Logic** | Rust `#[test]` / Vitest | State machines, calculations, serialization | Data aggregation, debounce, config parsing |
 | **L2 — Frontend Rendering** | Vitest + RTL + Tauri mock | React components, stores, conditional UI | Card rendering, toast lifecycle, slider defaults |
 | **L3 — WebView Integration** | Playwright / Chrome DevTools MCP (CDP) | Live DOM, screenshots, console errors | Multi-window layout, CSS transition, a11y audit |
 | **L4 — OS Integration** | Python pytest + pywinauto (partial) / Manual | Global key hooks, tray, registry, audio | OS hotkeys, tray menu, autostart, device detection |
 
-### Classification Criteria
-
-- **Frontend code calling Tauri `invoke`** → L2 (mock invoke)
-- **Code depending on Tauri events (`listen` / `emit`)** → L2 (mock listen)
-- **Code using `@tauri-apps/api/window`** → L2 (mock getCurrentWindow)
-- **Plain JS + Canvas outside React** (e.g., `overlay.html`) → L3 or L4:
-  - Verify canvas rendering only → L3 (CDP screenshot)
-  - OS-level input trigger (rdev, etc.) → L4 — CDP `press_key` fires
-    WebView-internal events only
-- **Direct OS API calls** (registry, audio devices, system tray) → L4
-- **Journey spanning OS trigger → WebView UI** → L3+L4 hybrid (Step 4a)
-
 ---
 
-## Step 2: L1 — Rust Unit Tests
-
-Rust tests need minimal setup. Core rules:
-
-- **Functions requiring `AppHandle`** → extract core logic into pure
-  functions testable without Tauri context.
-- **File I/O** → test in-memory structs, not `tauri-plugin-store`.
-- **Time-dependent logic** → inject timestamps, don't call `Instant::now()`.
-
-```rust
-// Good — pure, testable
-fn aggregate_records(records: &[Record], cutoff: Duration) -> Summary { ... }
-
-// Bad — requires a full Tauri app context
-fn get_stats(app: AppHandle) -> Stats { ... }
-```
-
----
-
-## Step 3: L2 — Vitest + RTL + Tauri Mock
-
-L2 is the largest layer by test count.
+## Step 2: L2 — Vitest + RTL + Tauri Mock
 
 ### Bootstrap
 
@@ -143,24 +100,12 @@ fake-timer leakage across tests (see `l2-act-fake-timers.md`).
 
 ---
 
-## Step 4: L3 — WebView CDP Tests
+## Step 3: L3 — WebView CDP Tests
 
 L3 drives the **running** Tauri WebView via CDP. `/tauri-webview-debug`
 owns CDP infrastructure (`.mcp.json`, IPv4 requirement, Vite HMR
 warning, build/launch split). Read it first if the CDP endpoint is
 not available — this section assumes it is.
-
-### What CDP Covers
-
-| Capability | Works via CDP? |
-|---|:---:|
-| DOM inspection, console, network | ✅ |
-| Screenshots, UI automation (click, type) | ✅ |
-| `rdev` / `WH_KEYBOARD_LL` global hook trigger | ❌ — fires WebView-internal events only |
-| Runtime change of `--browserUrl` | ❌ — fixed at MCP server startup |
-| Multi-window dynamic discovery | ❌ — new WebView2 windows are invisible to an existing CDP connection |
-
-The last item drives the **connect-after** pattern in the L3 recipes.
 
 ### L3 Recipes
 
@@ -177,35 +122,7 @@ See `/tauri-multi-instance` for the contract.
 
 ---
 
-## Step 4a: L3+L4 Hybrid — When to Cross the Line
-
-Some journeys span OS-level UI (tray, native windows) **and**
-WebView-internal UI (Radix Switch, Canvas). Neither tool alone covers
-them:
-
-- pywinauto cannot click WebView2 elements — not on the UIA tree.
-- Playwright CDP cannot click OS-level UI — tray, native popups, Win32
-  `#32768` menus.
-
-### Decision Signals
-
-| Signal | Example |
-|---|---|
-| Journey starts on OS, ends in WebView state | Tray "Settings" → toggle switch → registry change |
-| WebView element not in UIA tree | Radix Switch, Canvas, Shadow DOM |
-| Verification needs an OS API after WebView action | Registry / filesystem / process state check |
-
-If all three signals are absent, stay in pure L3 — hybrid adds a
-Python dependency and a second harness.
-
-The full hybrid pattern (CDP context manager in Python, `app` fixture
-CDP env var, Tray→Switch→Registry example, dependency list) lives in
-`references/recipes/l4-hybrid-cdp-python.md`. It composes on top of
-L4 infrastructure owned by `/tauri-os-automation`.
-
----
-
-## Step 5: L4 — OS Native Tests
+## Step 4: L4 — OS Native Tests
 
 L4 (Windows system tray, registry, global key hooks, window polling)
 is owned by **`/tauri-os-automation`**. Follow its "From
@@ -226,15 +143,3 @@ The app fixture must pass `WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugg
 reading `TAURI_CDP_PORT` from the env — see `/tauri-multi-instance`
 for the port contract, and `l4-hybrid-cdp-python.md` for the extended
 fixture when the project runs L3+L4 hybrid tests.
-
-### Manual-Only Items
-
-Document these in CLAUDE.md or the QA checklist as permanently manual:
-
-| Category | Reason |
-|---|---|
-| Global keyboard hook → sound pipeline | `LLKHF_INJECTED` blocks SendInput |
-| Audio playback (rodio / cpal) | Requires audio hardware |
-| Physical device detection | Requires plug/unplug events |
-| Reboot-triggered autostart | Requires OS reboot |
-| Long-running stability (CPU, memory leak) | Requires long observation |
