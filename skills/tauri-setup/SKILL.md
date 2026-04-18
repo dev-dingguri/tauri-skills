@@ -205,7 +205,11 @@ Apply the templates from `references/templates/`. Variants per file:
   (`https://biomejs.dev/schemas/<version>/schema.json`) that may lag
   behind what Step 3a installed. Check with
   `pnpm ls @biomejs/biome --depth 0` and edit the URL accordingly;
-  a mismatch causes editor warnings but not build failures.
+  a mismatch causes editor warnings but not build failures. The
+  template sets `indentStyle: "tab"` globally but overrides JSON
+  files to `indentStyle: "space", indentWidth: 2` — this prevents
+  Biome from reformatting `.claude/settings.json` and similar config
+  files with tabs.
 - **`cargo-append.toml`** → append to `src-tauri/Cargo.toml`. First
   change `[lib] crate-type` from `["staticlib", "cdylib", "rlib"]` to
   `["cdylib", "rlib"]`. `staticlib` is iOS/mobile-only; keeping it forces
