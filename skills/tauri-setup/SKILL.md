@@ -73,7 +73,7 @@ or just "all defaults". Defaults are marked **(default)**.
 - a) Yes
 - b) No **(default)**
 
-If Q9 = a, ask Q10–Q12:
+If Q9 = a, ask Q10–Q11:
 
 **Q10. Base primitive?** *(project-level, cannot mix later)*
 - a) Radix UI — wider ecosystem, `asChild` composition **(default)**
@@ -90,13 +90,6 @@ If Q9 = a, ask Q10–Q12:
 - h) custom (paste a preset URL from ui.shadcn.com)
 
 > If unsure, start with `vega` (the classic look) and switch later.
-
-**Q12. Base color?** *(selected interactively during `shadcn init` — no `--base-color` CLI flag exists)*
-- a) slate
-- b) gray
-- c) zinc
-- d) neutral
-- e) stone
 
 ### 1d. Icon Library
 
