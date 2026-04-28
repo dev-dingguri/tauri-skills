@@ -10,7 +10,7 @@
 import net from "node:net";
 import { spawn } from "node:child_process";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 
 const VITE_BASE = 1420;
 const CDP_BASE = 9222;
@@ -18,11 +18,21 @@ const CDP_BASE = 9222;
 const PORT_STEP = 10;
 const MAX_ATTEMPTS = 10;
 
+// Probe both families: Vite binds "localhost" (::1 or 127.0.0.1 per OS);
+// single-family check false-positives and Vite fails EADDRINUSE.
 function isPortFree(port) {
+  return Promise.all([
+    isPortFreeOn(port, "127.0.0.1"),
+    isPortFreeOn(port, "::1"),
+  ]).then(([v4, v6]) => v4 && v6);
+}
+
+function isPortFreeOn(port, host) {
   return new Promise((res) => {
     const server = net.createServer();
-    server.once("error", () => res(false));
-    server.listen(port, "127.0.0.1", () => server.close(() => res(true)));
+    // EADDRNOTAVAIL: family unavailable — Vite can't use it either.
+    server.once("error", (err) => res(err.code === "EADDRNOTAVAIL"));
+    server.listen(port, host, () => server.close(() => res(true)));
   });
 }
 
@@ -47,39 +57,53 @@ function updateMcpJson(cdpPort) {
   if (!existsSync(mcpPath)) return;
 
   try {
-    const mcp = JSON.parse(readFileSync(mcpPath, "utf-8"));
+    const original = readFileSync(mcpPath, "utf-8");
     const cdpUrl = `http://127.0.0.1:${cdpPort}`;
-    let changed = false;
-
-    for (const [key, flag] of [
-      ["playwright-cdp", "--cdp-endpoint"],
-      ["chrome-devtools-cdp", "--browserUrl"],
-    ]) {
-      const args = mcp.mcpServers?.[key]?.args;
-      if (!args) continue;
-      const idx = args.indexOf(flag);
-      if (idx !== -1 && args[idx + 1] !== cdpUrl) {
-        args[idx + 1] = cdpUrl;
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      writeFileSync(mcpPath, JSON.stringify(mcp, null, 2) + "\n");
+    // Why regex over JSON.parse/stringify: round-tripping forces the file
+    // through `JSON.stringify(..., null, 2)`, which hardcodes 2-space indent
+    // and LF line endings — overwriting whatever formatting the user has
+    // (tabs, CRLF, etc.) and producing a noisy working-tree diff every run.
+    // We only need to swap the URL after each known flag, so a targeted
+    // replacement leaves indent, line endings, key order, and trailing
+    // whitespace byte-identical.
+    const next = original.replace(
+      /("(?:--cdp-endpoint|--browserUrl)"\s*,\s*")http:\/\/127\.0\.0\.1:\d+(")/g,
+      `$1${cdpUrl}$2`,
+    );
+    if (next !== original) {
+      writeFileSync(mcpPath, next);
       console.log(`  .mcp.json updated → CDP ${cdpUrl}`);
       console.log("  Restart Claude Code to pick up the new MCP config\n");
     }
   } catch {
-    // .mcp.json parse error — skip
+    // .mcp.json I/O error — skip
   }
+}
+
+// Derive ID from `.worktrees/<...>` segments. Empty when run from the main repo.
+// Consumers suffix mutex/AppData/window-class names with this under cfg(debug_assertions).
+function deriveInstanceId() {
+  if (process.env.TAURI_INSTANCE_ID) return process.env.TAURI_INSTANCE_ID;
+  const segs = process.cwd().split(sep);
+  const idx = segs.indexOf(".worktrees");
+  if (idx === -1 || idx === segs.length - 1) return "";
+  return segs
+    .slice(idx + 1)
+    .join("-")
+    .replace(/[^a-zA-Z0-9_-]/g, "_");
 }
 
 async function main() {
   const vitePort = await findFreePort(VITE_BASE);
   const cdpPort = await findFreePort(CDP_BASE);
+  const instanceId = deriveInstanceId();
 
   console.log(`\n  Vite  → http://localhost:${vitePort}`);
-  console.log(`  CDP   → http://127.0.0.1:${cdpPort}\n`);
+  console.log(`  CDP   → http://127.0.0.1:${cdpPort}`);
+  if (instanceId) {
+    console.log(`  Inst  → ${instanceId}  (TAURI_INSTANCE_ID)`);
+  }
+  console.log("");
 
   updateMcpJson(cdpPort);
 
@@ -102,6 +126,7 @@ async function main() {
       TAURI_DEV_HOST: process.env.TAURI_DEV_HOST ?? "",
       TAURI_CDP_PORT: String(cdpPort),
       WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${cdpPort}`,
+      TAURI_INSTANCE_ID: instanceId,
     },
     stdio: "inherit",
   });
