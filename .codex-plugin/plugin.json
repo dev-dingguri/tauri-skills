@@ -1,0 +1,40 @@
+{
+	"name": "tauri-skills",
+	"version": "0.1.0",
+	"description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+	"author": {
+		"name": "dev-dingguri",
+		"url": "https://github.com/dev-dingguri"
+	},
+	"homepage": "https://github.com/dev-dingguri/tauri-skills",
+	"repository": "https://github.com/dev-dingguri/tauri-skills",
+	"license": "MIT",
+	"keywords": [
+		"tauri",
+		"tauri-v2",
+		"windows",
+		"webview2",
+		"desktop",
+		"react",
+		"skills"
+	],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Tauri Skills",
+		"shortDescription": "Tauri v2 desktop app development skills for Codex.",
+		"longDescription": "A collection of Codex skills for Tauri v2 desktop app development, with Windows-focused workflows for setup, WebView2 debugging, testing, multi-instance development, and OS-level automation.",
+		"developerName": "dev-dingguri",
+		"category": "Coding",
+		"capabilities": ["Interactive", "Read", "Write"],
+		"websiteURL": "https://github.com/dev-dingguri/tauri-skills",
+		"privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+		"termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+		"defaultPrompt": [
+			"Set up a new Tauri v2 React app.",
+			"Debug this Tauri WebView with CDP.",
+			"Add tests for this Tauri feature."
+		],
+		"brandColor": "#24C8DB",
+		"screenshots": []
+	}
+}
