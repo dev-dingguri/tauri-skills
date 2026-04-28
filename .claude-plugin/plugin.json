@@ -1,0 +1,21 @@
+{
+  "name": "tauri-skills",
+  "version": "0.1.0",
+  "description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "windows",
+    "webview2",
+    "desktop",
+    "react",
+    "skills"
+  ]
+}
