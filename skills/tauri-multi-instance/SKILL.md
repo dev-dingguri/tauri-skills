@@ -1,15 +1,11 @@
 ---
 name: tauri-multi-instance
 description: >-
-  Multi-instance contract for running multiple Tauri v2 instances in parallel
-  (git worktrees, side-by-side projects). Defines (1) the TAURI_DEV_PORT /
-  TAURI_CDP_PORT env var contract shared by Vite config, CDP debuggers, and
-  test fixtures, and (2) the TAURI_INSTANCE_ID contract for isolating
-  OS-global resources (Named Mutex, AppData dir, sentinel windows) in dev
-  builds. Provides the tauri-dev.mjs launcher and .mcp.json template.
+  Run multiple Tauri v2 instances in parallel (worktrees, side-by-side) via
+  TAURI_DEV_PORT/TAURI_CDP_PORT and TAURI_INSTANCE_ID contracts that isolate
+  ports and OS-global resources (Named Mutex, AppData, sentinel windows).
   Trigger: "multi-instance", "port conflict", "parallel tauri", "worktree dev",
-  "single-instance", "second instance blocked", "AppData collision", or when
-  orchestrated by tauri-setup / tauri-webview-debug / tauri-test-setup.
+  "single-instance", "AppData collision".
 ---
 
 # Tauri Multi-Instance Contract

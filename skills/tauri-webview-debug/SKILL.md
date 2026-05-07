@@ -1,9 +1,9 @@
 ---
 name: tauri-webview-debug
 description: >-
-  Debug Tauri v2 WebView2 via CDP — Playwright MCP (primary) + Chrome DevTools MCP
-  (fallback). Handles .mcp.json setup, CDP launch, and Lighthouse.
-  Trigger: UI debugging, DOM inspection, screenshots, a11y, or perf analysis in src-tauri/ projects.
+  Debug Tauri v2 WebView2 via CDP with Playwright MCP (primary) and Chrome
+  DevTools MCP (fallback). Trigger: UI debugging, DOM, screenshots, a11y, or
+  perf analysis in src-tauri/ projects.
 ---
 
 # Tauri WebView Debug — Browser Debugging Tools for Tauri v2

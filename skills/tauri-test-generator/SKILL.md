@@ -1,10 +1,9 @@
 ---
 name: tauri-test-generator
 description: >-
-  Use when generating tests for a Tauri v2 app — discovers user journeys from
-  code, identifies coverage gaps, and generates test code at the right layer.
-  Trigger on: "generate tests", "test generation", "missing tests",
-  "coverage gap", "add tests for [feature]" in a project with src-tauri/.
+  Generate Tauri v2 tests at the right layer from user journeys and coverage
+  gaps. Trigger: "generate tests", "missing tests", "coverage gap",
+  "add tests for ..." in src-tauri/ projects.
 ---
 
 # Tauri Test Generator

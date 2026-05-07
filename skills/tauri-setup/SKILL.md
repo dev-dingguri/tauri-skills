@@ -1,10 +1,9 @@
 ---
 name: tauri-setup
 description: >-
-  Tauri v2 + React project setup skill. Scaffolds with create-tauri-app,
-  configures tooling (Biome, Vitest, Playwright, shadcn/ui), and orchestrates
-  tauri-webview-debug, tauri-multi-instance, tauri-docs skills.
-  Trigger: "new tauri app", "tauri project setup", "tauri setup".
+  Scaffold a Tauri v2 + React project with Biome, Vitest, Playwright, and
+  shadcn/ui; orchestrates tauri-webview-debug, tauri-multi-instance, tauri-docs.
+  Trigger: "new tauri app", "tauri setup".
 ---
 
 # Tauri v2 Project Initial Setup

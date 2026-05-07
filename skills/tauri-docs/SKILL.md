@@ -1,8 +1,6 @@
 ---
 name: tauri-docs
-description: >
-  Tauri v2 documentation-first workflow. Verifies Tauri code against
-  official docs before writing.
+description: Verify Tauri v2 code against official docs before writing. Documentation-first workflow.
 compatibility: >
   Requires local Tauri v2 docs in references/ directory. Uses context7 MCP as
   fallback. WebFetch as last resort.

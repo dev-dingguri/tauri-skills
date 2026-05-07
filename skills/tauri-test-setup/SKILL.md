@@ -1,13 +1,10 @@
 ---
 name: tauri-test-setup
 description: >-
-  Test infrastructure guide for Tauri v2 apps. Covers test layer classification,
-  Tauri API mock recipes for Vitest + RTL, and CDP/manual test boundaries.
-  Trigger on: "test setup", "test infrastructure", "QA automation", "component test",
-  "E2E test" in a Tauri project.
-  Also trigger when: a project with src-tauri/ discusses vitest, testing-library, or
-  test strategy. Use when designing test infrastructure or strategy, not when simply
-  adding individual test cases.
+  Tauri v2 test infrastructure — layer classification, Vitest+RTL mock recipes,
+  and CDP/manual boundaries. Use for designing test strategy, not single test
+  cases. Trigger: "test setup", "test infrastructure", "E2E test",
+  "component test" in src-tauri/ projects.
 ---
 
 # Tauri v2 Testing — Layer-Based Test Infrastructure
