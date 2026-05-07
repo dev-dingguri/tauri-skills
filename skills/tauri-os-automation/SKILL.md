@@ -14,15 +14,13 @@ description: >-
 
 > **Reference-only skill:** This skill documents L4 test automation patterns
 > (pywinauto, UIA, `winreg` for registry read/backup/restore, `FindWindowW`
-> for window polling) consumed by `tauri-test-setup` and
-> `tauri-test-generator`. It does not execute the patterns itself. Generated
-> L4 tests require an interactive desktop session and may mutate
+> for window polling) consumed by `tauri-test-setup`. It does not execute the
+> patterns itself. Generated L4 tests require an interactive desktop session and may mutate
 > `HKCU\...\Run` (with backup/restore fixtures) when run.
 
 Accumulated Windows gotchas for Tauri v2 **L4 (OS-level) test automation**.
-The same pitfalls hit every new L4 test across every skill that sets up or
-generates them — this skill is the single source of truth so the knowledge
-does not silently drift between `tauri-test-setup` and `tauri-test-generator`.
+The same pitfalls hit every new L4 test — this skill is the single source of
+truth so the knowledge does not silently drift.
 
 ## L4 Automatable vs Manual
 
@@ -75,18 +73,6 @@ trap explanation, or constraint rationale.
    covering L4, reference `references/key-hook-constraints.md`.
 6. For the `TAURI_CDP_PORT` env-var contract consumed by the app fixture,
    invoke `/tauri-multi-instance` — do not duplicate the port rules here.
-
-### From `tauri-test-generator` (L4 or L3+L4 journeys)
-
-1. When generating "L4 Common Mistakes" rows, link to the relevant
-   reference file instead of rewriting the content — keep this skill as the
-   single source.
-2. **Tray icon journeys** → require search via `SystemTray.NormalButton` in
-   the overflow area, citing `references/windows-tray-uia.md`.
-3. **Window-appearance polling journeys** → require `FindWindowW`, citing
-   `references/polling-stability.md`.
-4. **Global key hook journeys** → classify as **manual**, citing
-   `references/key-hook-constraints.md` as the reason.
 
 ## Non-Goals
 

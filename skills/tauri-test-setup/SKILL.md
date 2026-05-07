@@ -1,17 +1,22 @@
 ---
 name: tauri-test-setup
 description: >-
-  Tauri v2 test infrastructure — layer classification, Vitest+RTL mock recipes,
-  and CDP/manual boundaries. Use for designing test strategy, not single test
-  cases. Trigger: "test setup", "test infrastructure", "E2E test",
-  "component test" in src-tauri/ projects.
+  Use when planning or adding tests in a Tauri v2 project: journey coverage
+  gaps, layer classification, Vitest+RTL mocks, WebView CDP, and OS/manual
+  boundaries. Trigger: "test setup", "test infrastructure", "generate tests",
+  "missing tests", "coverage gap", "E2E test", "component test" in src-tauri/
+  projects.
 ---
 
-# Tauri v2 Testing — Layer-Based Test Infrastructure
+# Tauri v2 Testing
 
 > **Platform note:** L2 (Vitest + RTL) is cross-platform, but L3/L4
 > (CDP, pywinauto, UIA) have only been tested on Windows. macOS/Linux
 > equivalents are unverified.
+
+Use this skill to decide **what to test**, **which layer should test it**,
+and **which infrastructure pattern to reuse**. Write tests for user outcomes,
+then place each assertion at the cheapest layer that proves it.
 
 Recipes under `references/recipes/`:
 
@@ -33,17 +38,68 @@ External delegations:
 
 ---
 
-## Step 1: Test Layers & Tool Selection
+## Step 1: Discover Journeys and Gaps
+
+For new tests or coverage audits, start from user journeys instead of files.
+Skip to Step 2 only when the journey/gap is already explicit.
+
+Scan four sources:
+
+| Source | How to find | What it reveals |
+|---|---|---|
+| Tauri commands | `rg "#\[tauri::command\]" src-tauri/src` | Backend capabilities and side effects |
+| Frontend actions | Stores/components that call `invoke()` or `emit()` | User-initiated IPC steps |
+| Entry points | `index.html`, extra window HTML files | Test surfaces and windows |
+| Event listeners | `rg "listen\(" src` | Backend-to-frontend reactive steps |
+
+Group commands/actions that share state or run in sequence into one journey.
+Flag unused commands, missing infrastructure, duplicated hardcoded data, and
+journeys whose OS side effects are untestable automatically.
+
+Output a compact coverage matrix before writing tests:
+
+```markdown
+| Journey | Step | Existing Test | Layer | Status |
+|---|---|---|---|---|
+| J-01 Settings | Toggle option -> invoke save -> persist | settings.test.tsx | L2 | Covered |
+| J-01 Settings | Registry side effect | (none) | L4 | Manual |
+```
+
+Prioritize gaps:
+
+- High user impact + easy layer coverage -> write now.
+- High user impact + hard OS dependency -> document manual QA.
+- Low impact -> skip unless the user explicitly asks.
+
+When writing tests, find an existing test at the same layer first and copy its
+structure, imports, mock setup, assertion style, and naming conventions.
+
+---
+
+## Step 2: Test Layers & Tool Selection
 
 | Layer | Tool | Coverage | Examples |
 |---|---|---|---|
+| **L1 — Pure Logic** | Rust `#[test]` / Vitest | State machines, calculations, parsing, serialization | Config parsing, debounce, data aggregation |
 | **L2 — Frontend Rendering** | Vitest + RTL + Tauri mock | React components, stores, conditional UI | Card rendering, toast lifecycle, slider defaults |
 | **L3 — WebView Integration** | Playwright / Chrome DevTools MCP (CDP) | Live DOM, screenshots, console errors | Multi-window layout, CSS transition, a11y audit |
 | **L4 — OS Integration** | Python pytest + pywinauto (partial) / Manual | Global key hooks, tray, registry, audio | OS hotkeys, tray menu, autostart, device detection |
 
+Classification rules:
+
+- Plain Rust/TypeScript logic with no Tauri boundary -> L1.
+- Frontend code calling Tauri `invoke`, `listen`, `emit`, or
+  `@tauri-apps/api/window` -> L2 with mocks.
+- Live WebView DOM, CSS, multi-window layout, screenshots, console errors -> L3.
+- Direct OS effects (registry, tray, audio device, global key hook) -> L4.
+- OS trigger followed by WebView state, or WebView action followed by OS side
+  effect -> L3+L4 hybrid.
+- Canvas or non-React WebView rendering -> L3 for pixels/DOM, L4 only when the
+  trigger or assertion crosses the OS boundary.
+
 ---
 
-## Step 2: L2 — Vitest + RTL + Tauri Mock
+## Step 3: L2 — Vitest + RTL + Tauri Mock
 
 ### Bootstrap
 
@@ -97,7 +153,7 @@ fake-timer leakage across tests (see `l2-act-fake-timers.md`).
 
 ---
 
-## Step 3: L3 — WebView CDP Tests
+## Step 4: L3 — WebView CDP Tests
 
 L3 drives the **running** Tauri WebView via CDP. `/tauri-webview-debug`
 owns CDP infrastructure (`.mcp.json`, IPv4 requirement, Vite HMR
@@ -119,7 +175,7 @@ See `/tauri-multi-instance` for the contract.
 
 ---
 
-## Step 4: L4 — OS Native Tests
+## Step 5: L4 — OS Native Tests
 
 L4 (Windows system tray, registry, global key hooks, window polling)
 is owned by **`/tauri-os-automation`**. Follow its "From
