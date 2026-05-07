@@ -4,26 +4,20 @@ AI coding agent skills for [Tauri v2](https://v2.tauri.app/) desktop app develop
 
 ## Installation
 
-### As a Codex plugin
-
-```bash
-codex plugin marketplace add dev-dingguri/tauri-skills
-```
-
-Private repo? Make sure `gh auth login` is set up first.
-
-### As a Claude Code plugin
+### Claude Code plugin
 
 ```bash
 /plugin marketplace add dev-dingguri/tauri-skills
 /plugin install tauri-skills@tauri-skills
 ```
 
-Private repo? Make sure `gh auth login` is set up first. For background
-auto-updates, also export `GITHUB_TOKEN` (or `GH_TOKEN`) — git credential
-helpers don't run unattended.
+### Codex plugin
 
-### As skills via npx (alternative)
+```bash
+codex plugin marketplace add dev-dingguri/tauri-skills
+```
+
+### skills
 
 ```bash
 npx skills add dev-dingguri/tauri-skills
