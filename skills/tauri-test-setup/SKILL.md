@@ -47,10 +47,10 @@ Scan four sources:
 
 | Source | How to find | What it reveals |
 |---|---|---|
-| Tauri commands | `rg "#\[tauri::command\]" src-tauri/src` | Backend capabilities and side effects |
+| Tauri commands | Search `#[tauri::command]` under `src-tauri/src` | Backend capabilities and side effects |
 | Frontend actions | Stores/components that call `invoke()` or `emit()` | User-initiated IPC steps |
 | Entry points | `index.html`, extra window HTML files | Test surfaces and windows |
-| Event listeners | `rg "listen\(" src` | Backend-to-frontend reactive steps |
+| Event listeners | Search `listen(` under `src` | Backend-to-frontend reactive steps |
 
 Group commands/actions that share state or run in sequence into one journey.
 Flag unused commands, missing infrastructure, duplicated hardcoded data, and
