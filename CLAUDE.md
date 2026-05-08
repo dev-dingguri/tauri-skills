@@ -15,5 +15,5 @@ Skills must be generic and reusable. Do not include identifiable project names, 
 
 ## Skill Conventions
 
-- Each skill lives in `skills/<skill-name>/SKILL.md`
+- Each skill lives in `plugins/<plugin-name>/skills/<skill-name>/SKILL.md`
 - Examples in skills should use generic, non-identifiable names
