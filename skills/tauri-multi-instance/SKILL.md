@@ -1,10 +1,9 @@
 ---
 name: tauri-multi-instance
 description: >-
-  Run multiple Tauri v2 instances in parallel (worktrees, side-by-side) via
-  TAURI_DEV_PORT/TAURI_CDP_PORT and TAURI_INSTANCE_ID contracts that isolate
-  ports and OS-global resources (Named Mutex, AppData, sentinel windows).
-  Trigger: "multi-instance", "port conflict", "parallel tauri", "worktree dev",
+  Run multiple Tauri v2 instances in parallel (worktrees, side-by-side) without
+  port collisions, single-instance guard rejection, or AppData state corruption.
+  Trigger: "port conflict", "worktree dev", "parallel tauri", "multi-instance",
   "single-instance", "AppData collision".
 ---
 

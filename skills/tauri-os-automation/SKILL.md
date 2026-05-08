@@ -1,10 +1,9 @@
 ---
 name: tauri-os-automation
 description: >-
-  Windows OS-level automation constraints for Tauri v2 L4 tests (tray,
-  registry, global key hooks) via pywinauto/UIA/winreg, plus what must stay
-  manual. Trigger: "L4 test", "pywinauto", "system tray test",
-  "global key hook test", "LLKHF_INJECTED", "UIA COM crash".
+  Internal reference consumed by tauri-test-setup — not user-invoked directly.
+  Documents Windows L4 automation patterns (tray via pywinauto/UIA, registry
+  via winreg, global key hook constraints) and what must stay manual.
 ---
 
 # Tauri OS Automation (L4)
