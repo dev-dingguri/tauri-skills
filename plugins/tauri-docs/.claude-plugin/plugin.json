@@ -1,0 +1,19 @@
+{
+  "name": "tauri-docs",
+  "version": "0.1.0",
+  "description": "Check Tauri v2 work against official docs and a curated gotchas.md, with a clear completion condition for documentation verification.",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "docs",
+    "gotchas",
+    "verification"
+  ]
+}

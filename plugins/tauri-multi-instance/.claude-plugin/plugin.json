@@ -1,0 +1,20 @@
+{
+  "name": "tauri-multi-instance",
+  "version": "0.1.0",
+  "description": "Port allocation contract for running multiple Tauri instances in parallel (git worktrees, side-by-side projects). Provides the tauri-dev.mjs launcher and the env var contract shared by Vite, CDP, and test fixtures.",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "multi-instance",
+    "worktree",
+    "ports",
+    "vite"
+  ]
+}

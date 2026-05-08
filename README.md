@@ -4,23 +4,15 @@ AI coding agent skills for [Tauri v2](https://v2.tauri.app/) desktop app develop
 
 ## Installation
 
-### Claude Code plugin
+Each skill is its own plugin — install only what you need (see [Skills](#skills)).
 
 ```bash
+# Claude Code
 /plugin marketplace add dev-dingguri/tauri-skills
-/plugin install tauri-skills@tauri-skills
-```
+/plugin install tauri-setup@tauri-skills
 
-### Codex plugin
-
-```bash
+# Codex — then enable individual plugins from the Codex UI
 codex plugin marketplace add dev-dingguri/tauri-skills
-```
-
-### skills
-
-```bash
-npx skills add dev-dingguri/tauri-skills
 ```
 
 ## Skills
@@ -28,7 +20,7 @@ npx skills add dev-dingguri/tauri-skills
 | Skill | What It Does |
 |-------|-------------|
 | **tauri-setup** | Scaffolds the verified default stack: Tauri v2 + React + TypeScript + pnpm + Biome, with Vitest, Playwright CDP hooks, and optional shadcn/ui |
-| **tauri-docs** | Checks Tauri v2 work against official docs and [gotchas.md](skills/tauri-docs/gotchas.md), with a clear completion condition for documentation verification |
+| **tauri-docs** | Checks Tauri v2 work against official docs and [gotchas.md](plugins/tauri-docs/skills/tauri-docs/gotchas.md), with a clear completion condition for documentation verification |
 | **tauri-test-setup** | Test strategy and infrastructure guide with journey coverage gaps, layer classification (L1/L2/L3/L4), Vitest + RTL mocks, WebView CDP, and OS/manual boundaries |
 | **tauri-webview-debug** | WebView2 debugging via CDP — Playwright MCP (primary) + Chrome DevTools MCP (fallback). Handles `.mcp.json` setup and Lighthouse audits |
 | **tauri-multi-instance** | Port allocation contract for running multiple Tauri instances in parallel (git worktrees, side-by-side projects). Provides the `tauri-dev.mjs` launcher and the env var contract shared by Vite, CDP, and test fixtures |
@@ -46,7 +38,7 @@ Each skill works independently. `tauri-setup` orchestrates webview-debug and mul
 | Background threads accessing state at shutdown | Deadlock — `ResourceTable` mutex contention |
 | `Option<State<T>>` in commands | Won't compile — no `CommandArg` impl |
 
-[Full list →](skills/tauri-docs/gotchas.md)
+[Full list →](plugins/tauri-docs/skills/tauri-docs/gotchas.md)
 
 ## Platform Support
 

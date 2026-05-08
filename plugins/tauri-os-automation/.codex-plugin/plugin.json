@@ -1,7 +1,7 @@
 {
-	"name": "tauri-skills",
+	"name": "tauri-os-automation",
 	"version": "0.1.0",
-	"description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+	"description": "Windows L4 automation constraints - system tray, registry, global key hooks via pywinauto / UIA / winreg. Defines what is automatable and what must stay manual. Internal reference consumed by tauri-test-setup.",
 	"author": {
 		"name": "dev-dingguri",
 		"url": "https://github.com/dev-dingguri"
@@ -13,26 +13,23 @@
 		"tauri",
 		"tauri-v2",
 		"windows",
-		"webview2",
-		"desktop",
-		"react",
-		"skills"
+		"pywinauto",
+		"uia",
+		"winreg",
+		"automation"
 	],
+	"skills": "./skills/",
 	"interface": {
-		"displayName": "Tauri Skills",
-		"shortDescription": "Tauri v2 desktop app development skills for Codex.",
-		"longDescription": "A collection of Codex skills for Tauri v2 desktop app development, with Windows-focused workflows for setup, WebView2 debugging, testing, multi-instance development, and OS-level automation.",
+		"displayName": "Tauri OS Automation",
+		"shortDescription": "Define Windows L4 automation boundaries for Tauri apps.",
+		"longDescription": "Windows L4 automation constraints for system tray, registry, and global key hooks via pywinauto, UIA, and winreg, defining what is automatable and what must stay manual.",
 		"developerName": "dev-dingguri",
 		"category": "Coding",
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dev-dingguri/tauri-skills",
 		"privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
 		"termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
-		"defaultPrompt": [
-			"Set up a new Tauri v2 React app.",
-			"Debug this Tauri WebView with CDP.",
-			"Add tests for this Tauri feature."
-		],
+		"defaultPrompt": ["Classify this Windows Tauri test boundary."],
 		"brandColor": "#24C8DB",
 		"screenshots": []
 	}

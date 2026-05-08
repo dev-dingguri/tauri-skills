@@ -1,0 +1,21 @@
+{
+  "name": "tauri-os-automation",
+  "version": "0.1.0",
+  "description": "Windows L4 automation constraints — system tray, registry, global key hooks via pywinauto / UIA / winreg. Defines what is automatable and what must stay manual. Internal reference consumed by tauri-test-setup.",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "windows",
+    "pywinauto",
+    "uia",
+    "winreg",
+    "automation"
+  ]
+}

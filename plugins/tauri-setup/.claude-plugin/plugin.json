@@ -1,0 +1,21 @@
+{
+  "name": "tauri-setup",
+  "version": "0.1.0",
+  "description": "Scaffold Tauri v2 + React + TypeScript + pnpm + Biome with Vitest, Playwright CDP hooks, and optional shadcn/ui. Orchestrates tauri-webview-debug and tauri-multi-instance during initial project creation.",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "scaffold",
+    "react",
+    "typescript",
+    "pnpm",
+    "biome"
+  ]
+}

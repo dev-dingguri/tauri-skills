@@ -1,7 +1,7 @@
 {
-  "name": "tauri-skills",
+  "name": "tauri-test-setup",
   "version": "0.1.0",
-  "description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+  "description": "Tauri v2 test strategy and infrastructure: journey coverage gaps, layer classification (L1/L2/L3/L4), Vitest + RTL mocks, WebView CDP, and OS/manual boundaries. Delegates L4 work to tauri-os-automation.",
   "author": {
     "name": "dev-dingguri",
     "url": "https://github.com/dev-dingguri"
@@ -12,10 +12,9 @@
   "keywords": [
     "tauri",
     "tauri-v2",
-    "windows",
-    "webview2",
-    "desktop",
-    "react",
-    "skills"
+    "testing",
+    "vitest",
+    "rtl",
+    "cdp"
   ]
 }

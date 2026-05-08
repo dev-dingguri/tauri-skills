@@ -6,21 +6,70 @@
   },
   "plugins": [
     {
-      "name": "tauri-skills",
+      "name": "tauri-setup",
       "source": {
         "source": "github",
-        "repo": "dev-dingguri/tauri-skills"
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-setup"
       },
-      "description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+      "description": "Scaffold Tauri v2 + React + TypeScript + pnpm + Biome with Vitest, Playwright CDP hooks, and optional shadcn/ui",
       "category": "development",
-      "keywords": [
-        "tauri",
-        "tauri-v2",
-        "windows",
-        "webview2",
-        "desktop",
-        "react"
-      ]
+      "keywords": ["tauri", "tauri-v2", "scaffold", "react", "typescript"]
+    },
+    {
+      "name": "tauri-docs",
+      "source": {
+        "source": "github",
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-docs"
+      },
+      "description": "Check Tauri v2 work against official docs and a curated gotchas.md",
+      "category": "development",
+      "keywords": ["tauri", "tauri-v2", "docs", "gotchas"]
+    },
+    {
+      "name": "tauri-test-setup",
+      "source": {
+        "source": "github",
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-test-setup"
+      },
+      "description": "Tauri v2 test strategy: layer classification (L1/L2/L3/L4), Vitest + RTL, WebView CDP, OS/manual boundaries",
+      "category": "development",
+      "keywords": ["tauri", "tauri-v2", "testing", "vitest", "cdp"]
+    },
+    {
+      "name": "tauri-webview-debug",
+      "source": {
+        "source": "github",
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-webview-debug"
+      },
+      "description": "Debug Tauri WebView2 via CDP — Playwright MCP (primary) + Chrome DevTools MCP (fallback)",
+      "category": "development",
+      "keywords": ["tauri", "tauri-v2", "webview2", "cdp", "windows"]
+    },
+    {
+      "name": "tauri-multi-instance",
+      "source": {
+        "source": "github",
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-multi-instance"
+      },
+      "description": "Port allocation contract for running multiple Tauri instances in parallel (git worktrees, side-by-side projects)",
+      "category": "development",
+      "keywords": ["tauri", "tauri-v2", "multi-instance", "worktree", "ports"]
+    },
+    {
+      "name": "tauri-os-automation",
+      "source": {
+        "source": "github",
+        "repo": "dev-dingguri/tauri-skills",
+        "path": "plugins/tauri-os-automation"
+      },
+      "description": "Windows L4 automation constraints via pywinauto / UIA / winreg — defines what is automatable and what must stay manual",
+      "category": "development",
+      "keywords": ["tauri", "tauri-v2", "windows", "pywinauto", "automation"]
     }
   ]
 }

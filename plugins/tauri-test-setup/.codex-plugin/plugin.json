@@ -1,0 +1,28 @@
+{
+	"name": "tauri-test-setup",
+	"version": "0.1.0",
+	"description": "Tauri v2 test strategy and infrastructure: journey coverage gaps, layer classification (L1/L2/L3/L4), Vitest + RTL mocks, WebView CDP, and OS/manual boundaries. Delegates L4 work to tauri-os-automation.",
+	"author": {
+		"name": "dev-dingguri",
+		"url": "https://github.com/dev-dingguri"
+	},
+	"homepage": "https://github.com/dev-dingguri/tauri-skills",
+	"repository": "https://github.com/dev-dingguri/tauri-skills",
+	"license": "MIT",
+	"keywords": ["tauri", "tauri-v2", "testing", "vitest", "rtl", "cdp"],
+	"skills": "./skills/",
+	"interface": {
+		"displayName": "Tauri Test Setup",
+		"shortDescription": "Plan Tauri v2 tests across unit, WebView, and OS boundaries.",
+		"longDescription": "Tauri v2 test strategy and infrastructure guidance covering journey gaps, L1/L2/L3/L4 layer classification, Vitest + RTL mocks, WebView CDP, and OS/manual boundaries.",
+		"developerName": "dev-dingguri",
+		"category": "Coding",
+		"capabilities": ["Interactive", "Read", "Write"],
+		"websiteURL": "https://github.com/dev-dingguri/tauri-skills",
+		"privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+		"termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+		"defaultPrompt": ["Add tests for this Tauri feature."],
+		"brandColor": "#24C8DB",
+		"screenshots": []
+	}
+}

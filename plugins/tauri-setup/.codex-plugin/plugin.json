@@ -1,7 +1,7 @@
 {
-	"name": "tauri-skills",
+	"name": "tauri-setup",
 	"version": "0.1.0",
-	"description": "AI coding agent skills for Tauri v2 desktop app development on Windows",
+	"description": "Scaffold Tauri v2 + React + TypeScript + pnpm + Biome with Vitest, Playwright CDP hooks, and optional shadcn/ui. Orchestrates tauri-webview-debug and tauri-multi-instance during initial project creation.",
 	"author": {
 		"name": "dev-dingguri",
 		"url": "https://github.com/dev-dingguri"
@@ -12,27 +12,24 @@
 	"keywords": [
 		"tauri",
 		"tauri-v2",
-		"windows",
-		"webview2",
-		"desktop",
+		"scaffold",
 		"react",
-		"skills"
+		"typescript",
+		"pnpm",
+		"biome"
 	],
+	"skills": "./skills/",
 	"interface": {
-		"displayName": "Tauri Skills",
-		"shortDescription": "Tauri v2 desktop app development skills for Codex.",
-		"longDescription": "A collection of Codex skills for Tauri v2 desktop app development, with Windows-focused workflows for setup, WebView2 debugging, testing, multi-instance development, and OS-level automation.",
+		"displayName": "Tauri Setup",
+		"shortDescription": "Scaffold a Tauri v2 React app with the verified default stack.",
+		"longDescription": "Scaffold Tauri v2 + React + TypeScript + pnpm + Biome with Vitest, Playwright CDP hooks, optional shadcn/ui, and setup-time orchestration for WebView debugging and multi-instance development.",
 		"developerName": "dev-dingguri",
 		"category": "Coding",
 		"capabilities": ["Interactive", "Read", "Write"],
 		"websiteURL": "https://github.com/dev-dingguri/tauri-skills",
 		"privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
 		"termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
-		"defaultPrompt": [
-			"Set up a new Tauri v2 React app.",
-			"Debug this Tauri WebView with CDP.",
-			"Add tests for this Tauri feature."
-		],
+		"defaultPrompt": ["Set up a new Tauri v2 React app."],
 		"brandColor": "#24C8DB",
 		"screenshots": []
 	}

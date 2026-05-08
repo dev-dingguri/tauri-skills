@@ -1,0 +1,21 @@
+{
+  "name": "tauri-webview-debug",
+  "version": "0.1.0",
+  "description": "Debug Tauri WebView2 via CDP — Playwright MCP (primary) + Chrome DevTools MCP (fallback). Handles .mcp.json setup and Lighthouse audits.",
+  "author": {
+    "name": "dev-dingguri",
+    "url": "https://github.com/dev-dingguri"
+  },
+  "homepage": "https://github.com/dev-dingguri/tauri-skills",
+  "repository": "https://github.com/dev-dingguri/tauri-skills",
+  "license": "MIT",
+  "keywords": [
+    "tauri",
+    "tauri-v2",
+    "webview2",
+    "cdp",
+    "playwright",
+    "lighthouse",
+    "windows"
+  ]
+}
