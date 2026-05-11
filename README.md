@@ -6,14 +6,20 @@ AI coding agent skills for [Tauri v2](https://v2.tauri.app/) desktop app develop
 
 Each skill is its own plugin — install only what you need (see [Skills](#skills)).
 
-```bash
-# Claude Code
-/plugin marketplace add dev-dingguri/tauri-skills
-/plugin install tauri-setup@tauri-skills
+### Claude Code
 
-# Codex — then enable individual plugins from the Codex UI
+```bash
+/plugin marketplace add dev-dingguri/tauri-skills
+/plugin install <skill-name>@tauri-skills
+```
+
+### Codex
+
+```bash
 codex plugin marketplace add dev-dingguri/tauri-skills
 ```
+
+Then enable individual plugins from the Codex UI.
 
 ## Skills
 
